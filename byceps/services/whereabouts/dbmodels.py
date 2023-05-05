@@ -44,7 +44,7 @@ class DbWhereabouts(db.Model):
         self.hide_if_empty = hide_if_empty
 
 
-class DbStatus(db.Model):
+class DbWhereaboutsStatus(db.Model):
     """A user's most recent whereabouts."""
 
     __tablename__ = 'whereabouts_statuses'
@@ -65,7 +65,7 @@ class DbStatus(db.Model):
         self.set_at = set_at
 
 
-class DbUpdate(db.Model):
+class DbWhereaboutsUpdate(db.Model):
     """An update on a user's whereabouts."""
 
     __tablename__ = 'whereabouts_updates'

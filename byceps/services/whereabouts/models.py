@@ -27,14 +27,14 @@ class Whereabouts:
 
 
 @dataclass(frozen=True)
-class Status:
+class WhereaboutsStatus:
     user_id: UserID
     whereabouts_id: WhereaboutsID
     set_at: datetime
 
 
 @dataclass(frozen=True)
-class Update:
+class WhereaboutsUpdate:
     id: UUID
     user_id: UserID
     whereabouts_id: WhereaboutsID

@@ -15,8 +15,8 @@ from sqlalchemy import select
 from byceps.database import db, execute_upsert
 from byceps.typing import PartyID, UserID
 
-from .dbmodels import DbStatus, DbUpdate, DbWhereabouts
-from .models import Status, Whereabouts, WhereaboutsID
+from .dbmodels import DbWhereabouts, DbWhereaboutsStatus, DbWhereaboutsUpdate
+from .models import Whereabouts, WhereaboutsID, WhereaboutsStatus
 
 
 # -------------------------------------------------------------------- #
@@ -88,7 +88,7 @@ def set_status(user_id: UserID, whereabouts_id: WhereaboutsID) -> None:
     now = datetime.utcnow()
 
     # Add status.
-    table = DbStatus.__table__
+    table = DbWhereaboutsStatus.__table__
     identifier = {
         'user_id': user_id,
     }
@@ -99,16 +99,16 @@ def set_status(user_id: UserID, whereabouts_id: WhereaboutsID) -> None:
     execute_upsert(table, identifier, replacement)
 
     # Add update.
-    db_update = DbUpdate(user_id, whereabouts_id, now)
+    db_update = DbWhereaboutsUpdate(user_id, whereabouts_id, now)
     db.session.add(db_update)
 
     db.session.commit()
 
 
-def get_statuses(party_id: PartyID) -> list[Status]:
+def get_statuses(party_id: PartyID) -> list[WhereaboutsStatus]:
     """Return user statuses."""
     db_statuses = db.session.scalars(
-        select(DbStatus)
+        select(DbWhereaboutsStatus)
         .join(DbWhereabouts)
         .filter(DbWhereabouts.party_id == party_id)
     ).all()
@@ -116,8 +116,8 @@ def get_statuses(party_id: PartyID) -> list[Status]:
     return [_db_entity_to_status(db_status) for db_status in db_statuses]
 
 
-def _db_entity_to_status(db_status: DbStatus) -> Status:
-    return Status(
+def _db_entity_to_status(db_status: DbWhereaboutsStatus) -> WhereaboutsStatus:
+    return WhereaboutsStatus(
         user_id=db_status.user_id,
         whereabouts_id=db_status.whereabouts_id,
         set_at=db_status.set_at,
