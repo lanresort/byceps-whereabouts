@@ -15,8 +15,18 @@ from sqlalchemy import select
 from byceps.database import db, execute_upsert
 from byceps.typing import PartyID, UserID
 
-from .dbmodels import DbWhereabouts, DbWhereaboutsStatus, DbWhereaboutsUpdate
-from .models import Whereabouts, WhereaboutsID, WhereaboutsStatus
+from .dbmodels import (
+    DbWhereabouts,
+    DbWhereaboutsStatus,
+    DbWhereaboutsTag,
+    DbWhereaboutsUpdate,
+)
+from .models import (
+    Whereabouts,
+    WhereaboutsID,
+    WhereaboutsStatus,
+    WhereaboutsTag,
+)
 
 
 # -------------------------------------------------------------------- #
@@ -76,6 +86,44 @@ def _db_entity_to_whereabouts(db_whereabouts: DbWhereabouts) -> Whereabouts:
         description=db_whereabouts.description,
         position=db_whereabouts.position,
         hide_if_empty=db_whereabouts.hide_if_empty,
+    )
+
+
+# -------------------------------------------------------------------- #
+# tags
+
+
+def create_tag(
+    tag: str,
+    user_id: UserID,
+    *,
+    sound_filename: str | None = None,
+) -> WhereaboutsTag:
+    """Create a tag."""
+    created_at = datetime.utcnow()
+
+    db_tag = DbWhereaboutsTag(
+        created_at, tag, user_id, sound_filename=sound_filename
+    )
+    db.session.add(db_tag)
+    db.session.commit()
+
+    return _db_entity_to_tag(db_tag)
+
+
+def get_all_tags() -> list[WhereaboutsTag]:
+    """Return all tags."""
+    db_tags = db.session.scalars(select(DbWhereaboutsTag)).all()
+
+    return [_db_entity_to_tag(db_tag) for db_tag in db_tags]
+
+
+def _db_entity_to_tag(db_tag: DbWhereaboutsTag) -> WhereaboutsTag:
+    return WhereaboutsTag(
+        id=db_tag.id,
+        tag=db_tag.tag,
+        user_id=db_tag.user_id,
+        sound_filename=db_tag.sound_filename,
     )
 
 

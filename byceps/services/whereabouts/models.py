@@ -6,6 +6,8 @@ byceps.services.whereabouts.models
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import NewType
@@ -24,6 +26,14 @@ class Whereabouts:
     description: str
     position: int
     hide_if_empty: bool
+
+
+@dataclass(frozen=True)
+class WhereaboutsTag:
+    id: UUID
+    tag: str
+    user_id: UserID
+    sound_filename: str | None
 
 
 @dataclass(frozen=True)

@@ -6,9 +6,11 @@ byceps.services.whereabouts.dbmodels
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
+from __future__ import annotations
+
 from datetime import datetime
 
-from byceps.database import db, generate_uuid7
+from byceps.database import db, generate_uuid4, generate_uuid7
 from byceps.typing import PartyID, UserID
 
 from .models import WhereaboutsID
@@ -42,6 +44,37 @@ class DbWhereabouts(db.Model):
         self.description = description
         self.position = position
         self.hide_if_empty = hide_if_empty
+
+
+class DbWhereaboutsTag(db.Model):
+    """A user tag.
+
+    Can be an identifier stored on an RFID transponder, in a barcode,
+    etc. Used to identify a user against the whereabouts system.
+
+    A user can have multiple tags.
+    """
+
+    __tablename__ = 'whereabouts_tags'
+
+    id = db.Column(db.Uuid, default=generate_uuid4, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False)
+    tag = db.Column(db.UnicodeText, unique=True, nullable=False)
+    user_id = db.Column(db.Uuid, db.ForeignKey('users.id'), nullable=False)
+    sound_filename = db.Column(db.UnicodeText, nullable=True)
+
+    def __init__(
+        self,
+        created_at: datetime,
+        tag: str,
+        user_id: UserID,
+        *,
+        sound_filename: str | None = None,
+    ) -> None:
+        self.created_at = created_at
+        self.tag = tag
+        self.user_id = user_id
+        self.sound_filename = sound_filename
 
 
 class DbWhereaboutsStatus(db.Model):
