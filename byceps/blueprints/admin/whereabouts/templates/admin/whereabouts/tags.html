@@ -20,7 +20,7 @@
       </tr>
     </thead>
     <tbody>
-      {%- for whereabouts in tags|sort(attribute='tag') %}
+      {%- for tag in tags|sort(attribute='tag') %}
       <tr>
         <td>{{ tag.tag }}</td>
         <td>{{ render_user_avatar_and_name(users_by_id[tag.user_id]) }}</td>
