@@ -1,0 +1,11 @@
+[tags_to_user_ids]
+{%- for tag in tags|sort(attribute='tag') %}
+"{{ tag.tag }}" = "{{ tag.user.id|string }}"  # {{ tag.user.screen_name }}
+{%- endfor %}
+
+[user_sounds]
+{%- for tag in tags|sort(attribute='user.id') %}
+  {%- if tag.sound_filename %}
+"{{ tag.user.id|string }}" = "{{ tag.sound_filename }}"
+  {%- endif %}
+{%- endfor %}
