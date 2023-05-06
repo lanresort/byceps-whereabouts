@@ -13,6 +13,8 @@ from datetime import datetime
 from sqlalchemy import select
 
 from byceps.database import db, execute_upsert
+from byceps.services.user import user_service
+from byceps.services.user.models.user import User
 from byceps.typing import PartyID, UserID
 
 from .dbmodels import (
@@ -108,21 +110,30 @@ def create_tag(
     db.session.add(db_tag)
     db.session.commit()
 
-    return _db_entity_to_tag(db_tag)
+    user = user_service.get_user(db_tag.user_id)
+
+    return _db_entity_to_tag(db_tag, user)
 
 
 def get_all_tags() -> list[WhereaboutsTag]:
     """Return all tags."""
     db_tags = db.session.scalars(select(DbWhereaboutsTag)).all()
 
-    return [_db_entity_to_tag(db_tag) for db_tag in db_tags]
+    user_ids = {db_tag.user_id for db_tag in db_tags}
+    users = user_service.get_users(user_ids, include_avatars=True)
+    users_by_id = user_service.index_users_by_id(users)
+
+    return [
+        _db_entity_to_tag(db_tag, users_by_id[db_tag.user_id])
+        for db_tag in db_tags
+    ]
 
 
-def _db_entity_to_tag(db_tag: DbWhereaboutsTag) -> WhereaboutsTag:
+def _db_entity_to_tag(db_tag: DbWhereaboutsTag, user: User) -> WhereaboutsTag:
     return WhereaboutsTag(
         id=db_tag.id,
         tag=db_tag.tag,
-        user_id=db_tag.user_id,
+        user=user,
         sound_filename=db_tag.sound_filename,
     )
 

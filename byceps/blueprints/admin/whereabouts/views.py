@@ -58,13 +58,8 @@ def tags():
     """Show tags."""
     tags = whereabouts_service.get_all_tags()
 
-    user_ids = {tag.user_id for tag in tags}
-    users = user_service.get_users(user_ids, include_avatars=True)
-    users_by_id = user_service.index_users_by_id(users)
-
     return {
         'tags': tags,
-        'users_by_id': users_by_id,
     }
 
 

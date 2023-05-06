@@ -13,6 +13,7 @@ from datetime import datetime
 from typing import NewType
 from uuid import UUID
 
+from byceps.services.user.models.user import User
 from byceps.typing import PartyID, UserID
 
 
@@ -32,7 +33,7 @@ class Whereabouts:
 class WhereaboutsTag:
     id: UUID
     tag: str
-    user_id: UserID
+    user: User
     sound_filename: str | None
 
 

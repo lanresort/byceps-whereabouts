@@ -23,7 +23,7 @@
       {%- for tag in tags|sort(attribute='tag') %}
       <tr>
         <td>{{ tag.tag }}</td>
-        <td>{{ render_user_avatar_and_name(users_by_id[tag.user_id], size=16) }}</td>
+        <td>{{ render_user_avatar_and_name(tag.user, size=16) }}</td>
         <td>{{ tag.sound_filename|fallback }}</td>
       </tr>
       {%- endfor %}
