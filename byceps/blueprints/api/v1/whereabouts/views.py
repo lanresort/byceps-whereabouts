@@ -30,7 +30,7 @@ def set_status():
         abort(415)
 
     try:
-        req = SetStatus.parse_obj(request.get_json())
+        req = SetStatus.model_validate(request.get_json())
     except ValidationError as e:
         abort(400, str(e.normalized_messages()))
 
