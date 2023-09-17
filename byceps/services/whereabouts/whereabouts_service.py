@@ -148,7 +148,7 @@ def set_status(
     now = datetime.utcnow()
 
     status = WhereaboutsStatus(
-        user_id=user.id,
+        user=user,
         whereabouts_id=whereabouts_id,
         set_at=now,
     )
@@ -171,7 +171,7 @@ def _persist_update(
     # status
     table = DbWhereaboutsStatus.__table__
     identifier = {
-        'user_id': status.user_id,
+        'user_id': status.user.id,
     }
     replacement = {
         'whereabouts_id': status.whereabouts_id,
@@ -196,12 +196,22 @@ def get_statuses(party_id: PartyID) -> list[WhereaboutsStatus]:
         .filter(DbWhereabouts.party_id == party_id)
     ).all()
 
-    return [_db_entity_to_status(db_status) for db_status in db_statuses]
+    user_ids = {db_status.user_id for db_status in db_statuses}
+
+    users = user_service.get_users(user_ids, include_avatars=True)
+    users_by_id = user_service.index_users_by_id(users)
+
+    return [
+        _db_entity_to_status(db_status, users_by_id[db_status.user_id])
+        for db_status in db_statuses
+    ]
 
 
-def _db_entity_to_status(db_status: DbWhereaboutsStatus) -> WhereaboutsStatus:
+def _db_entity_to_status(
+    db_status: DbWhereaboutsStatus, user: User
+) -> WhereaboutsStatus:
     return WhereaboutsStatus(
-        user_id=db_status.user_id,
+        user=user,
         whereabouts_id=db_status.whereabouts_id,
         set_at=db_status.set_at,
     )

@@ -14,7 +14,7 @@ from typing import NewType
 from uuid import UUID
 
 from byceps.services.user.models.user import User
-from byceps.typing import PartyID, UserID
+from byceps.typing import PartyID
 
 
 WhereaboutsID = NewType('WhereaboutsID', UUID)
@@ -39,7 +39,7 @@ class WhereaboutsTag:
 
 @dataclass(frozen=True)
 class WhereaboutsStatus:
-    user_id: UserID
+    user: User
     whereabouts_id: WhereaboutsID
     set_at: datetime
 
