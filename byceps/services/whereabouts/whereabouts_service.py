@@ -13,6 +13,7 @@ from datetime import datetime
 from sqlalchemy import select
 
 from byceps.database import db, execute_upsert, generate_uuid7
+from byceps.services.party import party_service
 from byceps.services.party.models import Party
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
@@ -57,7 +58,7 @@ def create_whereabouts(
     db.session.add(db_whereabouts)
     db.session.commit()
 
-    return _db_entity_to_whereabouts(db_whereabouts)
+    return _db_entity_to_whereabouts(db_whereabouts, party)
 
 
 def find_whereabouts(whereabouts_id: WhereaboutsID) -> Whereabouts | None:
@@ -67,7 +68,9 @@ def find_whereabouts(whereabouts_id: WhereaboutsID) -> Whereabouts | None:
     if db_whereabouts is None:
         return None
 
-    return _db_entity_to_whereabouts(db_whereabouts)
+    party = party_service.get_party(db_whereabouts.party_id)
+
+    return _db_entity_to_whereabouts(db_whereabouts, party)
 
 
 def get_whereabouts_list(party: Party) -> list[Whereabouts]:
@@ -77,15 +80,17 @@ def get_whereabouts_list(party: Party) -> list[Whereabouts]:
     ).all()
 
     return [
-        _db_entity_to_whereabouts(db_whereabouts)
+        _db_entity_to_whereabouts(db_whereabouts, party)
         for db_whereabouts in db_whereabouts_list
     ]
 
 
-def _db_entity_to_whereabouts(db_whereabouts: DbWhereabouts) -> Whereabouts:
+def _db_entity_to_whereabouts(
+    db_whereabouts: DbWhereabouts, party: Party
+) -> Whereabouts:
     return Whereabouts(
         id=db_whereabouts.id,
-        party_id=db_whereabouts.party_id,
+        party=party,
         description=db_whereabouts.description,
         position=db_whereabouts.position,
         hide_if_empty=db_whereabouts.hide_if_empty,

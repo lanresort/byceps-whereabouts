@@ -13,8 +13,8 @@ from datetime import datetime
 from typing import NewType
 from uuid import UUID
 
+from byceps.services.party.models import Party
 from byceps.services.user.models.user import User
-from byceps.typing import PartyID
 
 
 WhereaboutsID = NewType('WhereaboutsID', UUID)
@@ -23,7 +23,7 @@ WhereaboutsID = NewType('WhereaboutsID', UUID)
 @dataclass(frozen=True)
 class Whereabouts:
     id: WhereaboutsID
-    party_id: PartyID
+    party: Party
     description: str
     position: int
     hide_if_empty: bool
