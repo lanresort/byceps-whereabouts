@@ -45,15 +45,13 @@
           {%- if statuses %}
         <div class="box grid statuses">
             {%- for status in statuses|sort(attribute='set_at') %}
-              {%- with user = users_by_id[status.user_id] %}
           <div class="row">
-            <div>{{ render_user_avatar(user, size=40) }}</div>
+            <div>{{ render_user_avatar(status.user, size=40) }}</div>
             <div>
-              {{ render_user_screen_name(user) }}<br>
+              {{ render_user_screen_name(status.user) }}<br>
               <small class="dimmed">{{ _('since') }} {{ status.set_at|timedeltaformat }}</small>
             </div>
           </div>
-              {%- endwith %}
             {%- endfor %}
         </div>
           {%- else %}

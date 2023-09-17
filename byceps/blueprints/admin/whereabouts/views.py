@@ -12,7 +12,6 @@ from flask import abort, render_template, request
 from flask_babel import gettext
 
 from byceps.services.party import party_service
-from byceps.services.user import user_service
 from byceps.services.whereabouts import whereabouts_service
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.framework.flash import flash_success
@@ -39,15 +38,10 @@ def index(party_id):
     for status in statuses:
         statuses_by_whereabouts[status.whereabouts_id].append(status)
 
-    user_ids = {status.user_id for status in statuses}
-    users = user_service.get_users(user_ids, include_avatars=True)
-    users_by_id = user_service.index_users_by_id(users)
-
     return {
         'party': party,
         'whereabouts_list': whereabouts_list,
         'statuses_by_whereabouts': statuses_by_whereabouts,
-        'users_by_id': users_by_id,
     }
 
 
