@@ -13,9 +13,9 @@ from datetime import datetime
 from sqlalchemy import select
 
 from byceps.database import db, execute_upsert, generate_uuid7
+from byceps.services.party.models import Party
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
-from byceps.typing import PartyID
 
 from .dbmodels import (
     DbWhereabouts,
@@ -37,7 +37,7 @@ from .models import (
 
 
 def create_whereabouts(
-    party_id: PartyID,
+    party: Party,
     description: str,
     *,
     position: int | None = None,
@@ -45,14 +45,14 @@ def create_whereabouts(
 ) -> Whereabouts:
     """Create whereabouts."""
     if position is None:
-        whereabouts_list = get_whereabouts_list(party_id)
+        whereabouts_list = get_whereabouts_list(party)
         if whereabouts_list:
             next_position = max(w.position for w in whereabouts_list) + 1
         else:
             next_position = 0
 
     db_whereabouts = DbWhereabouts(
-        party_id, description, next_position, hide_if_empty
+        party.id, description, next_position, hide_if_empty
     )
     db.session.add(db_whereabouts)
     db.session.commit()
@@ -70,10 +70,10 @@ def find_whereabouts(whereabouts_id: WhereaboutsID) -> Whereabouts | None:
     return _db_entity_to_whereabouts(db_whereabouts)
 
 
-def get_whereabouts_list(party_id: PartyID) -> list[Whereabouts]:
+def get_whereabouts_list(party: Party) -> list[Whereabouts]:
     """Return possible whereabouts."""
     db_whereabouts_list = db.session.scalars(
-        select(DbWhereabouts).filter_by(party_id=party_id)
+        select(DbWhereabouts).filter_by(party_id=party.id)
     ).all()
 
     return [
@@ -188,12 +188,12 @@ def _persist_update(
     db.session.commit()
 
 
-def get_statuses(party_id: PartyID) -> list[WhereaboutsStatus]:
+def get_statuses(party: Party) -> list[WhereaboutsStatus]:
     """Return user statuses."""
     db_statuses = db.session.scalars(
         select(DbWhereaboutsStatus)
         .join(DbWhereabouts)
-        .filter(DbWhereabouts.party_id == party_id)
+        .filter(DbWhereabouts.party_id == party.id)
     ).all()
 
     user_ids = {db_status.user_id for db_status in db_statuses}
