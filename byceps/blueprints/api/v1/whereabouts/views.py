@@ -42,4 +42,4 @@ def set_status():
     if whereabouts is None:
         abort(400, 'Whereabouts ID unknown')
 
-    whereabouts_service.set_status(user, whereabouts.id)
+    whereabouts_service.set_status(user, whereabouts)
