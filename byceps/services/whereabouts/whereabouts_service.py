@@ -147,21 +147,21 @@ def _db_entity_to_tag(db_tag: DbWhereaboutsTag, user: User) -> WhereaboutsTag:
 
 
 def set_status(
-    user: User, whereabouts_id: WhereaboutsID
+    user: User, whereabouts: Whereabouts
 ) -> tuple[WhereaboutsStatus, WhereaboutsUpdate]:
     """Set a user's whereabouts."""
     now = datetime.utcnow()
 
     status = WhereaboutsStatus(
         user=user,
-        whereabouts_id=whereabouts_id,
+        whereabouts_id=whereabouts.id,
         set_at=now,
     )
 
     update = WhereaboutsUpdate(
         id=generate_uuid7(),
         user=user,
-        whereabouts_id=whereabouts_id,
+        whereabouts_id=whereabouts.id,
         created_at=now,
     )
 
