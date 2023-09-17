@@ -13,6 +13,7 @@ from datetime import datetime
 from sqlalchemy import select
 
 from byceps.database import db, execute_upsert, generate_uuid7
+from byceps.events.whereabouts import WhereaboutsUpdatedEvent
 from byceps.services.party import party_service
 from byceps.services.party.models import Party
 from byceps.services.user import user_service
@@ -148,7 +149,7 @@ def _db_entity_to_tag(db_tag: DbWhereaboutsTag, user: User) -> WhereaboutsTag:
 
 def set_status(
     user: User, whereabouts: Whereabouts
-) -> tuple[WhereaboutsStatus, WhereaboutsUpdate]:
+) -> tuple[WhereaboutsStatus, WhereaboutsUpdate, WhereaboutsUpdatedEvent]:
     """Set a user's whereabouts."""
     now = datetime.utcnow()
 
@@ -165,9 +166,20 @@ def set_status(
         created_at=now,
     )
 
+    event = WhereaboutsUpdatedEvent(
+        occurred_at=now,
+        initiator_id=user.id,
+        initiator_screen_name=user.screen_name,
+        party_id=whereabouts.party.id,
+        party_title=whereabouts.party.title,
+        user_id=user.id,
+        user_screen_name=user.screen_name,
+        whereabouts_description=whereabouts.description,
+    )
+
     _persist_update(status, update)
 
-    return status, update
+    return status, update, event
 
 
 def _persist_update(
