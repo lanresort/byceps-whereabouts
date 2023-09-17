@@ -47,6 +47,6 @@ class WhereaboutsStatus:
 @dataclass(frozen=True)
 class WhereaboutsUpdate:
     id: UUID
-    user_id: UserID
+    user: User
     whereabouts_id: WhereaboutsID
     created_at: datetime
