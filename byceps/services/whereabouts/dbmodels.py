@@ -11,8 +11,9 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from byceps.database import db, generate_uuid4, generate_uuid7
+from byceps.database import db
 from byceps.typing import PartyID, UserID
+from byceps.util.uuid import generate_uuid4, generate_uuid7
 
 from .models import WhereaboutsID
 

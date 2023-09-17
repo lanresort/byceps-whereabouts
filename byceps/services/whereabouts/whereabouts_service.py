@@ -12,12 +12,13 @@ from datetime import datetime
 
 from sqlalchemy import select
 
-from byceps.database import db, execute_upsert, generate_uuid7
+from byceps.database import db, execute_upsert
 from byceps.events.whereabouts import WhereaboutsUpdatedEvent
 from byceps.services.party import party_service
 from byceps.services.party.models import Party
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
+from byceps.util.uuid import generate_uuid7
 
 from .dbmodels import (
     DbWhereabouts,
