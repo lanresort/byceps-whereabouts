@@ -11,6 +11,8 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
+from sqlalchemy.orm import Mapped, mapped_column
+
 from byceps.database import db
 from byceps.typing import PartyID, UserID
 from byceps.util.uuid import generate_uuid4, generate_uuid7
@@ -27,13 +29,15 @@ class DbWhereabouts(db.Model):
         db.UniqueConstraint('party_id', 'position'),
     )
 
-    id = db.Column(db.Uuid, default=generate_uuid7, primary_key=True)
-    party_id = db.Column(
-        db.UnicodeText, db.ForeignKey('parties.id'), index=True, nullable=False
+    id: Mapped[WhereaboutsID] = mapped_column(
+        db.Uuid, default=generate_uuid7, primary_key=True
     )
-    description = db.Column(db.UnicodeText, nullable=False)
-    position = db.Column(db.Integer, nullable=False)
-    hide_if_empty = db.Column(db.Boolean, default=False, nullable=False)
+    party_id: Mapped[PartyID] = mapped_column(
+        db.UnicodeText, db.ForeignKey('parties.id'), index=True
+    )
+    description: Mapped[str] = mapped_column(db.UnicodeText)
+    position: Mapped[int]
+    hide_if_empty: Mapped[bool] = mapped_column(default=False)
 
     def __init__(
         self,
@@ -59,11 +63,13 @@ class DbWhereaboutsTag(db.Model):
 
     __tablename__ = 'whereabouts_tags'
 
-    id = db.Column(db.Uuid, default=generate_uuid4, primary_key=True)
-    created_at = db.Column(db.DateTime, nullable=False)
-    tag = db.Column(db.UnicodeText, unique=True, nullable=False)
-    user_id = db.Column(db.Uuid, db.ForeignKey('users.id'), nullable=False)
-    sound_filename = db.Column(db.UnicodeText, nullable=True)
+    id: Mapped[UUID] = mapped_column(
+        db.Uuid, default=generate_uuid4, primary_key=True
+    )
+    created_at: Mapped[datetime]
+    tag: Mapped[str] = mapped_column(db.UnicodeText, unique=True)
+    user_id: Mapped[UserID] = mapped_column(db.Uuid, db.ForeignKey('users.id'))
+    sound_filename: Mapped[str | None] = mapped_column(db.UnicodeText)
 
     def __init__(
         self,
@@ -84,13 +90,13 @@ class DbWhereaboutsStatus(db.Model):
 
     __tablename__ = 'whereabouts_statuses'
 
-    user_id = db.Column(
+    user_id: Mapped[UserID] = mapped_column(
         db.Uuid, db.ForeignKey('users.id'), primary_key=True, index=True
     )
-    whereabouts_id = db.Column(
-        db.Uuid, db.ForeignKey('whereabouts.id'), nullable=False
+    whereabouts_id: Mapped[WhereaboutsID] = mapped_column(
+        db.Uuid, db.ForeignKey('whereabouts.id')
     )
-    set_at = db.Column(db.DateTime, nullable=False)
+    set_at: Mapped[datetime]
 
     def __init__(
         self, user_id: UserID, whereabouts_id: WhereaboutsID, set_at: datetime
@@ -105,14 +111,14 @@ class DbWhereaboutsUpdate(db.Model):
 
     __tablename__ = 'whereabouts_updates'
 
-    id = db.Column(db.Uuid, primary_key=True)
-    user_id = db.Column(
-        db.Uuid, db.ForeignKey('users.id'), index=True, nullable=False
+    id: Mapped[UUID] = mapped_column(db.Uuid, primary_key=True)
+    user_id: Mapped[UserID] = mapped_column(
+        db.Uuid, db.ForeignKey('users.id'), index=True
     )
-    whereabouts_id = db.Column(
-        db.Uuid, db.ForeignKey('whereabouts.id'), nullable=False
+    whereabouts_id: Mapped[WhereaboutsID] = mapped_column(
+        db.Uuid, db.ForeignKey('whereabouts.id')
     )
-    created_at = db.Column(db.DateTime, nullable=False)
+    created_at: Mapped[datetime]
 
     def __init__(
         self,
