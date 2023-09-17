@@ -12,7 +12,7 @@ from datetime import datetime
 
 from sqlalchemy import select
 
-from byceps.database import db, execute_upsert
+from byceps.database import db, execute_upsert, generate_uuid7
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
 from byceps.typing import PartyID, UserID
@@ -28,6 +28,7 @@ from .models import (
     WhereaboutsID,
     WhereaboutsStatus,
     WhereaboutsTag,
+    WhereaboutsUpdate,
 )
 
 
@@ -140,23 +141,48 @@ def _db_entity_to_tag(db_tag: DbWhereaboutsTag, user: User) -> WhereaboutsTag:
 # status
 
 
-def set_status(user_id: UserID, whereabouts_id: WhereaboutsID) -> None:
+def set_status(
+    user_id: UserID, whereabouts_id: WhereaboutsID
+) -> tuple[WhereaboutsStatus, WhereaboutsUpdate]:
     """Set a user's whereabouts."""
     now = datetime.utcnow()
 
-    # Add status.
+    status = WhereaboutsStatus(
+        user_id=user_id,
+        whereabouts_id=whereabouts_id,
+        set_at=now,
+    )
+
+    update = WhereaboutsUpdate(
+        id=generate_uuid7(),
+        user_id=user_id,
+        whereabouts_id=whereabouts_id,
+        created_at=now,
+    )
+
+    _persist_update(status, update)
+
+    return status, update
+
+
+def _persist_update(
+    status: WhereaboutsStatus, update: WhereaboutsUpdate
+) -> None:
+    # status
     table = DbWhereaboutsStatus.__table__
     identifier = {
-        'user_id': user_id,
+        'user_id': status.user_id,
     }
     replacement = {
-        'whereabouts_id': whereabouts_id,
-        'set_at': now,
+        'whereabouts_id': status.whereabouts_id,
+        'set_at': status.set_at,
     }
     execute_upsert(table, identifier, replacement)
 
-    # Add update.
-    db_update = DbWhereaboutsUpdate(user_id, whereabouts_id, now)
+    # update
+    db_update = DbWhereaboutsUpdate(
+        update.id, update.user_id, update.whereabouts_id, update.created_at
+    )
     db.session.add(db_update)
 
     db.session.commit()

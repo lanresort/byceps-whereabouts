@@ -9,6 +9,7 @@ byceps.services.whereabouts.dbmodels
 from __future__ import annotations
 
 from datetime import datetime
+from uuid import UUID
 
 from byceps.database import db, generate_uuid4, generate_uuid7
 from byceps.typing import PartyID, UserID
@@ -103,7 +104,7 @@ class DbWhereaboutsUpdate(db.Model):
 
     __tablename__ = 'whereabouts_updates'
 
-    id = db.Column(db.Uuid, default=generate_uuid7, primary_key=True)
+    id = db.Column(db.Uuid, primary_key=True)
     user_id = db.Column(
         db.Uuid, db.ForeignKey('users.id'), index=True, nullable=False
     )
@@ -114,10 +115,12 @@ class DbWhereaboutsUpdate(db.Model):
 
     def __init__(
         self,
+        update_id: UUID,
         user_id: UserID,
         whereabouts_id: WhereaboutsID,
         created_at: datetime,
     ) -> None:
+        self.id = update_id
         self.user_id = user_id
         self.whereabouts_id = whereabouts_id
         self.created_at = created_at
