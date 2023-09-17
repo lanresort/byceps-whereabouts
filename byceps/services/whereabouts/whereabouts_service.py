@@ -125,8 +125,9 @@ def get_all_tags() -> list[WhereaboutsTag]:
     db_tags = db.session.scalars(select(DbWhereaboutsTag)).all()
 
     user_ids = {db_tag.user_id for db_tag in db_tags}
-    users = user_service.get_users(user_ids, include_avatars=True)
-    users_by_id = user_service.index_users_by_id(users)
+    users_by_id = user_service.get_users_indexed_by_id(
+        user_ids, include_avatars=True
+    )
 
     return [
         _db_entity_to_tag(db_tag, users_by_id[db_tag.user_id])
@@ -214,9 +215,9 @@ def get_statuses(party: Party) -> list[WhereaboutsStatus]:
     ).all()
 
     user_ids = {db_status.user_id for db_status in db_statuses}
-
-    users = user_service.get_users(user_ids, include_avatars=True)
-    users_by_id = user_service.index_users_by_id(users)
+    users_by_id = user_service.get_users_indexed_by_id(
+        user_ids, include_avatars=True
+    )
 
     return [
         _db_entity_to_status(db_status, users_by_id[db_status.user_id])
