@@ -12,6 +12,7 @@ from pydantic import ValidationError
 from byceps.blueprints.api.decorators import api_token_required
 from byceps.services.user import user_service
 from byceps.services.whereabouts import whereabouts_service
+from byceps.signals import whereabouts as whereabouts_signals
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.views import respond_no_content
 
@@ -42,4 +43,6 @@ def set_status():
     if whereabouts is None:
         abort(400, 'Whereabouts ID unknown')
 
-    whereabouts_service.set_status(user, whereabouts)
+    _, _, event = whereabouts_service.set_status(user, whereabouts)
+
+    whereabouts_signals.whereabouts_updated.send(None, event=event)
