@@ -31,9 +31,9 @@ def index(party_id):
     """Show whereabouts for party."""
     party = _get_party_or_404(party_id)
 
-    whereabouts_list = whereabouts_service.get_whereabouts_list(party.id)
+    whereabouts_list = whereabouts_service.get_whereabouts_list(party)
 
-    statuses = whereabouts_service.get_statuses(party.id)
+    statuses = whereabouts_service.get_statuses(party)
     statuses_by_whereabouts = defaultdict(list)
     for status in statuses:
         statuses_by_whereabouts[status.whereabouts_id].append(status)
@@ -97,7 +97,7 @@ def create(party_id):
     hide_if_empty = form.hide_if_empty.data
 
     whereabouts_service.create_whereabouts(
-        party.id, description, hide_if_empty=hide_if_empty
+        party, description, hide_if_empty=hide_if_empty
     )
 
     flash_success(gettext('The object has been created.'))
