@@ -9,6 +9,7 @@ byceps.services.whereabouts.dbmodels
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 from sqlalchemy.orm import Mapped, mapped_column
@@ -69,7 +70,7 @@ class DbWhereaboutsTag(db.Model):
     created_at: Mapped[datetime]
     tag: Mapped[str] = mapped_column(db.UnicodeText, unique=True)
     user_id: Mapped[UserID] = mapped_column(db.Uuid, db.ForeignKey('users.id'))
-    sound_filename: Mapped[str | None] = mapped_column(db.UnicodeText)
+    sound_filename: Mapped[Optional[str]] = mapped_column(db.UnicodeText)
 
     def __init__(
         self,
