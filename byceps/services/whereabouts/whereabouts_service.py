@@ -121,6 +121,22 @@ def create_tag(
     return _db_entity_to_tag(db_tag, user)
 
 
+def find_tag_by_value(value: str) -> WhereaboutsTag | None:
+    """Return tag by value."""
+    db_tag = db.session.scalars(
+        select(DbWhereaboutsTag).filter(
+            db.func.lower(DbWhereaboutsTag.tag) == value.lower()
+        )
+    ).one_or_none()
+
+    if db_tag is None:
+        return None
+
+    user = user_service.get_user(db_tag.user_id, include_avatar=True)
+
+    return _db_entity_to_tag(db_tag, user)
+
+
 def get_all_tags() -> list[WhereaboutsTag]:
     """Return all tags."""
     db_tags = db.session.scalars(select(DbWhereaboutsTag)).all()

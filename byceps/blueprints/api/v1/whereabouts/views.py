@@ -6,7 +6,7 @@ byceps.blueprints.api.v1.whereabouts.views
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
-from flask import abort, request
+from flask import abort, jsonify, request
 from pydantic import ValidationError
 
 from byceps.blueprints.api.decorators import api_token_required
@@ -14,12 +14,34 @@ from byceps.services.user import user_service
 from byceps.services.whereabouts import whereabouts_service
 from byceps.signals import whereabouts as whereabouts_signals
 from byceps.util.framework.blueprint import create_blueprint
-from byceps.util.views import respond_no_content
+from byceps.util.views import create_empty_json_response, respond_no_content
 
 from .models import SetStatus
 
 
 blueprint = create_blueprint('whereabouts_api', __name__)
+
+
+@blueprint.get('/tags/<tag_value>')
+@api_token_required
+def get_tag(tag_value):
+    """Get details for tag."""
+    tag = whereabouts_service.find_tag_by_value(tag_value)
+
+    if tag is None:
+        return create_empty_json_response(404)
+
+    return jsonify(
+        {
+            'tag': tag.tag,
+            'user': {
+                'id': tag.user.id,
+                'screen_name': tag.user.screen_name,
+                'avatar_url': tag.user.avatar_url,
+            },
+            'sound_filename': tag.sound_filename,
+        }
+    )
 
 
 @blueprint.post('/set_status')
