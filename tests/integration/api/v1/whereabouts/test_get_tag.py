@@ -46,12 +46,12 @@ def test_with_known_tag_unauthorized(api_client, tag):
 
 
 @pytest.fixture(scope='module')
-def tag(user):
+def tag(user, admin_user):
     tag = '0004283951'
     sound_filename = 'moin.ogg'
 
     return whereabouts_service.create_tag(
-        tag, user, sound_filename=sound_filename
+        tag, user, admin_user, sound_filename=sound_filename
     )
 
 

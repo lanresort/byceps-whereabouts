@@ -106,6 +106,7 @@ def _db_entity_to_whereabouts(
 def create_tag(
     tag: str,
     user: User,
+    creator: User,
     *,
     sound_filename: str | None = None,
 ) -> WhereaboutsTag:
@@ -113,7 +114,7 @@ def create_tag(
     created_at = datetime.utcnow()
 
     db_tag = DbWhereaboutsTag(
-        created_at, tag, user.id, sound_filename=sound_filename
+        created_at, creator.id, tag, user.id, sound_filename=sound_filename
     )
     db.session.add(db_tag)
     db.session.commit()

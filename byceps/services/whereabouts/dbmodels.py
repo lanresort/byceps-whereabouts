@@ -68,6 +68,9 @@ class DbWhereaboutsTag(db.Model):
         db.Uuid, default=generate_uuid4, primary_key=True
     )
     created_at: Mapped[datetime]
+    creator_id: Mapped[UserID] = mapped_column(
+        db.Uuid, db.ForeignKey('users.id')
+    )
     tag: Mapped[str] = mapped_column(db.UnicodeText, unique=True)
     user_id: Mapped[UserID] = mapped_column(db.Uuid, db.ForeignKey('users.id'))
     sound_filename: Mapped[Optional[str]] = mapped_column(db.UnicodeText)
@@ -75,12 +78,14 @@ class DbWhereaboutsTag(db.Model):
     def __init__(
         self,
         created_at: datetime,
+        creator_id: UserID,
         tag: str,
         user_id: UserID,
         *,
         sound_filename: str | None = None,
     ) -> None:
         self.created_at = created_at
+        self.creator_id = creator_id
         self.tag = tag
         self.user_id = user_id
         self.sound_filename = sound_filename
