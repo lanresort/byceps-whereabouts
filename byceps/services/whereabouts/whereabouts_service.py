@@ -45,6 +45,7 @@ def create_whereabouts(
     *,
     position: int | None = None,
     hide_if_empty: bool = False,
+    secret: bool = False,
 ) -> Whereabouts:
     """Create whereabouts."""
     if position is None:
@@ -55,7 +56,7 @@ def create_whereabouts(
             next_position = 0
 
     db_whereabouts = DbWhereabouts(
-        party.id, description, next_position, hide_if_empty
+        party.id, description, next_position, hide_if_empty, secret=secret
     )
     db.session.add(db_whereabouts)
     db.session.commit()
@@ -96,6 +97,7 @@ def _db_entity_to_whereabouts(
         description=db_whereabouts.description,
         position=db_whereabouts.position,
         hide_if_empty=db_whereabouts.hide_if_empty,
+        secret=db_whereabouts.secret,
     )
 
 

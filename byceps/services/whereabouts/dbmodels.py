@@ -39,6 +39,7 @@ class DbWhereabouts(db.Model):
     description: Mapped[str] = mapped_column(db.UnicodeText)
     position: Mapped[int]
     hide_if_empty: Mapped[bool] = mapped_column(default=False)
+    secret: Mapped[bool]
 
     def __init__(
         self,
@@ -46,11 +47,14 @@ class DbWhereabouts(db.Model):
         description: str,
         position: int,
         hide_if_empty: bool,
+        *,
+        secret: bool = False,
     ) -> None:
         self.party_id = party_id
         self.description = description
         self.position = position
         self.hide_if_empty = hide_if_empty
+        self.secret = secret
 
 
 class DbWhereaboutsTag(db.Model):

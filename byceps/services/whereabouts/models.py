@@ -27,6 +27,7 @@ class Whereabouts:
     description: str
     position: int
     hide_if_empty: bool
+    secret: bool
 
 
 @dataclass(frozen=True)
