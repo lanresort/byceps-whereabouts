@@ -59,11 +59,11 @@ def set_status():
 
     user = user_service.find_user(req.user_id)
     if user is None:
-        abort(400, 'User ID unknown')
+        abort(400, 'Unknown user ID')
 
     whereabouts = whereabouts_service.find_whereabouts(req.whereabouts_id)
     if whereabouts is None:
-        abort(400, 'Whereabouts ID unknown')
+        abort(400, 'Unknown whereabouts ID')
 
     _, _, event = whereabouts_service.set_status(user, whereabouts)
 
