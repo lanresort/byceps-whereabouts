@@ -77,7 +77,9 @@ class DbWhereaboutsTag(db.Model):
     )
     tag: Mapped[str] = mapped_column(db.UnicodeText, unique=True)
     user_id: Mapped[UserID] = mapped_column(db.Uuid, db.ForeignKey('users.id'))
-    sound_filename: Mapped[Optional[str]] = mapped_column(db.UnicodeText)
+    sound_filename: Mapped[Optional[str]] = mapped_column(  # noqa: UP007
+        db.UnicodeText
+    )
     suspended: Mapped[bool]
 
     def __init__(
