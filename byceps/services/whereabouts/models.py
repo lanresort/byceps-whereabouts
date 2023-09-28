@@ -35,6 +35,7 @@ class WhereaboutsTag:
     tag: str
     user: User
     sound_filename: str | None
+    suspended: bool
 
 
 @dataclass(frozen=True)

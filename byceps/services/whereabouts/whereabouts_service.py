@@ -159,6 +159,7 @@ def _db_entity_to_tag(db_tag: DbWhereaboutsTag, user: User) -> WhereaboutsTag:
         tag=db_tag.tag,
         user=user,
         sound_filename=db_tag.sound_filename,
+        suspended=db_tag.suspended,
     )
 
 

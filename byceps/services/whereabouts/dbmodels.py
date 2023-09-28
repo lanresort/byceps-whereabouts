@@ -74,6 +74,7 @@ class DbWhereaboutsTag(db.Model):
     tag: Mapped[str] = mapped_column(db.UnicodeText, unique=True)
     user_id: Mapped[UserID] = mapped_column(db.Uuid, db.ForeignKey('users.id'))
     sound_filename: Mapped[Optional[str]] = mapped_column(db.UnicodeText)
+    suspended: Mapped[bool]
 
     def __init__(
         self,
@@ -83,12 +84,14 @@ class DbWhereaboutsTag(db.Model):
         user_id: UserID,
         *,
         sound_filename: str | None = None,
+        suspended: bool = False,
     ) -> None:
         self.created_at = created_at
         self.creator_id = creator_id
         self.tag = tag
         self.user_id = user_id
         self.sound_filename = sound_filename
+        self.suspended = suspended
 
 
 class DbWhereaboutsStatus(db.Model):
