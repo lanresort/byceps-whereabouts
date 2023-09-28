@@ -227,6 +227,23 @@ def _persist_update(
     db.session.commit()
 
 
+def find_status(user: User, party: Party) -> WhereaboutsStatus | None:
+    """Return user's status for the party, if known."""
+    db_status = db.session.scalars(
+        select(DbWhereaboutsStatus)
+        .join(DbWhereabouts)
+        .filter(DbWhereaboutsStatus.user_id == user.id)
+        .filter(DbWhereabouts.party_id == party.id)
+    ).one_or_none()
+
+    if db_status is None:
+        return None
+
+    user = user_service.get_user(db_status.user_id, include_avatar=True)
+
+    return _db_entity_to_status(db_status, user)
+
+
 def get_statuses(party: Party) -> list[WhereaboutsStatus]:
     """Return user statuses."""
     db_statuses = db.session.scalars(

@@ -10,6 +10,7 @@ from flask import abort, jsonify, request
 from pydantic import ValidationError
 
 from byceps.blueprints.api.decorators import api_token_required
+from byceps.services.party import party_service
 from byceps.services.user import user_service
 from byceps.services.whereabouts import whereabouts_service
 from byceps.signals import whereabouts as whereabouts_signals
@@ -40,6 +41,42 @@ def get_tag(tag_value):
                 'avatar_url': tag.user.avatar_url,
             },
             'sound_filename': tag.sound_filename,
+        }
+    )
+
+
+@blueprint.get('/statuses/<uuid:user_id>/<party_id>')
+@api_token_required
+def get_status(user_id, party_id):
+    """Get user's status at party."""
+    user = user_service.find_user(user_id)
+    if user is None:
+        abort(404, 'Unknown user ID')
+
+    party = party_service.find_party(party_id)
+    if user is None:
+        abort(404, 'Unknown party ID')
+
+    status = whereabouts_service.find_status(user, party)
+    if status is None:
+        return create_empty_json_response(404)
+
+    whereabouts = whereabouts_service.find_whereabouts(status.whereabouts_id)
+    if whereabouts is None:
+        abort(500, 'Unknown whereabouts ID')  # not a client error
+
+    return jsonify(
+        {
+            'user': {
+                'id': user.id,
+                'screen_name': user.screen_name,
+                'avatar_url': user.avatar_url,
+            },
+            'whereabouts': {
+                'id': whereabouts.id,
+                'description': whereabouts.description,
+            },
+            'set_at': status.set_at.isoformat(),
         }
     )
 
