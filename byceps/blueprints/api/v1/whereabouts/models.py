@@ -12,5 +12,4 @@ from pydantic import BaseModel
 
 
 class SetStatus(BaseModel):
-    user_id: UUID
     whereabouts_id: UUID
