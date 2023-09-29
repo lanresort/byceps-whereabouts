@@ -29,6 +29,8 @@
         <th>Tag</th>
         <th>{{ _('User') }}</th>
         <th>{{ _('Sound filename') }}</th>
+        <th>{{ _('Created at') }}</th>
+        <th>{{ _('Created by') }}</th>
       </tr>
     </thead>
     <tbody>
@@ -43,6 +45,8 @@
         </td>
         <td>{{ render_user_avatar_and_name(tag.user, size=16) }}</td>
         <td>{{ tag.sound_filename|fallback }}</td>
+        <td>{{ tag.created_at|datetimeformat }}</td>
+        <td>{{ render_user_avatar_and_name(tag.creator, size=16) }}</td>
       </tr>
       {%- endfor %}
     </tbody>
