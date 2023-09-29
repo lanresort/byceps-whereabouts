@@ -8,8 +8,6 @@ byceps.services.whereabouts.whereabouts_service
 
 from __future__ import annotations
 
-from datetime import datetime
-
 from sqlalchemy import select
 
 from byceps.database import db, execute_upsert
@@ -18,8 +16,8 @@ from byceps.services.party import party_service
 from byceps.services.party.models import Party
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
-from byceps.util.uuid import generate_uuid4, generate_uuid7
 
+from . import whereabouts_domain_service
 from .dbmodels import (
     DbWhereabouts,
     DbWhereaboutsStatus,
@@ -48,8 +46,6 @@ def create_whereabouts(
     secret: bool = False,
 ) -> Whereabouts:
     """Create whereabouts."""
-    whereabouts_id = WhereaboutsID(generate_uuid7())
-
     if position is None:
         whereabouts_list = get_whereabouts_list(party)
         if whereabouts_list:
@@ -57,18 +53,31 @@ def create_whereabouts(
         else:
             next_position = 0
 
-    db_whereabouts = DbWhereabouts(
-        whereabouts_id,
-        party.id,
+    whereabouts = whereabouts_domain_service.create_whereabouts(
+        party,
         description,
         next_position,
-        hide_if_empty,
+        hide_if_empty=hide_if_empty,
         secret=secret,
     )
+
+    _persist_whereabouts(whereabouts)
+
+    return whereabouts
+
+
+def _persist_whereabouts(whereabouts: Whereabouts) -> None:
+    db_whereabouts = DbWhereabouts(
+        whereabouts.id,
+        whereabouts.party.id,
+        whereabouts.description,
+        whereabouts.position,
+        whereabouts.hide_if_empty,
+        secret=whereabouts.secret,
+    )
+
     db.session.add(db_whereabouts)
     db.session.commit()
-
-    return _db_entity_to_whereabouts(db_whereabouts, party)
 
 
 def find_whereabouts(whereabouts_id: WhereaboutsID) -> Whereabouts | None:
@@ -120,21 +129,27 @@ def create_tag(
     sound_filename: str | None = None,
 ) -> WhereaboutsTag:
     """Create a tag."""
-    tag_id = generate_uuid4()
-    created_at = datetime.utcnow()
+    tag_obj = whereabouts_domain_service.create_tag(
+        tag, creator, user, sound_filename=sound_filename
+    )
 
+    _persist_tag(tag_obj)
+
+    return tag_obj
+
+
+def _persist_tag(tag: WhereaboutsTag) -> None:
     db_tag = DbWhereaboutsTag(
-        tag_id,
-        created_at,
-        creator.id,
-        tag,
-        user.id,
-        sound_filename=sound_filename,
+        tag.id,
+        tag.created_at,
+        tag.creator.id,
+        tag.tag,
+        tag.user.id,
+        sound_filename=tag.sound_filename,
+        suspended=tag.suspended,
     )
     db.session.add(db_tag)
     db.session.commit()
-
-    return _db_entity_to_tag(db_tag, creator, user)
 
 
 def find_tag_by_value(value: str) -> WhereaboutsTag | None:
@@ -196,30 +211,8 @@ def set_status(
     user: User, whereabouts: Whereabouts
 ) -> tuple[WhereaboutsStatus, WhereaboutsUpdate, WhereaboutsUpdatedEvent]:
     """Set a user's whereabouts."""
-    now = datetime.utcnow()
-
-    status = WhereaboutsStatus(
-        user=user,
-        whereabouts_id=whereabouts.id,
-        set_at=now,
-    )
-
-    update = WhereaboutsUpdate(
-        id=generate_uuid7(),
-        user=user,
-        whereabouts_id=whereabouts.id,
-        created_at=now,
-    )
-
-    event = WhereaboutsUpdatedEvent(
-        occurred_at=now,
-        initiator_id=user.id,
-        initiator_screen_name=user.screen_name,
-        party_id=whereabouts.party.id,
-        party_title=whereabouts.party.title,
-        user_id=user.id,
-        user_screen_name=user.screen_name,
-        whereabouts_description=whereabouts.description,
+    status, update, event = whereabouts_domain_service.set_status(
+        user, whereabouts
     )
 
     _persist_update(status, update)
