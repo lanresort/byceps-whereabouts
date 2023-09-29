@@ -16,7 +16,7 @@ from .base import _BaseEvent
 
 
 @dataclass(frozen=True)
-class WhereaboutsUpdatedEvent(_BaseEvent):
+class WhereaboutsStatusUpdatedEvent(_BaseEvent):
     party_id: PartyID
     party_title: str
     user_id: UserID

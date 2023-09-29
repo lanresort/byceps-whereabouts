@@ -16,13 +16,15 @@ from byceps.announce.helpers import (
     get_screen_name_or_fallback,
     with_locale,
 )
-from byceps.events.whereabouts import WhereaboutsUpdatedEvent
+from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
 from byceps.services.webhooks.models import Announcement, OutgoingWebhook
 
 
 @with_locale
-def announce_whereabouts_updated(
-    event_name: str, event: WhereaboutsUpdatedEvent, webhook: OutgoingWebhook
+def announce_whereabouts_status_updated(
+    event_name: str,
+    event: WhereaboutsStatusUpdatedEvent,
+    webhook: OutgoingWebhook,
 ) -> Announcement | None:
     """Announce that a user's whereabouts has been updated."""
     user_screen_name = get_screen_name_or_fallback(event.user_screen_name)

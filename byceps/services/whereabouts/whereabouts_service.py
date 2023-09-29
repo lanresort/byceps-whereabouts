@@ -11,7 +11,7 @@ from __future__ import annotations
 from sqlalchemy import select
 
 from byceps.database import db, execute_upsert
-from byceps.events.whereabouts import WhereaboutsUpdatedEvent
+from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
 from byceps.services.party import party_service
 from byceps.services.party.models import Party
 from byceps.services.user import user_service
@@ -209,7 +209,7 @@ def _db_entity_to_tag(
 
 def set_status(
     user: User, whereabouts: Whereabouts
-) -> tuple[WhereaboutsStatus, WhereaboutsUpdate, WhereaboutsUpdatedEvent]:
+) -> tuple[WhereaboutsStatus, WhereaboutsUpdate, WhereaboutsStatusUpdatedEvent]:
     """Set a user's whereabouts."""
     status, update, event = whereabouts_domain_service.set_status(
         user, whereabouts

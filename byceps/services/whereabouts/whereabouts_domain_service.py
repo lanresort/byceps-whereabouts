@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from byceps.events.whereabouts import WhereaboutsUpdatedEvent
+from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
 from byceps.services.party.models import Party
 from byceps.services.user.models.user import User
 from byceps.util.uuid import generate_uuid4, generate_uuid7
@@ -70,7 +70,7 @@ def create_tag(
 
 def set_status(
     user: User, whereabouts: Whereabouts
-) -> tuple[WhereaboutsStatus, WhereaboutsUpdate, WhereaboutsUpdatedEvent]:
+) -> tuple[WhereaboutsStatus, WhereaboutsUpdate, WhereaboutsStatusUpdatedEvent]:
     """Set a user's whereabouts."""
     update_id = generate_uuid7()
     set_at = datetime.utcnow()
@@ -88,7 +88,7 @@ def set_status(
         created_at=set_at,
     )
 
-    event = WhereaboutsUpdatedEvent(
+    event = WhereaboutsStatusUpdatedEvent(
         occurred_at=set_at,
         initiator_id=user.id,
         initiator_screen_name=user.screen_name,

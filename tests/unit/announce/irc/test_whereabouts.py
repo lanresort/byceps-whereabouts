@@ -6,7 +6,7 @@
 from flask import Flask
 
 from byceps.announce.announce import build_announcement_request
-from byceps.events.whereabouts import WhereaboutsUpdatedEvent
+from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
 from byceps.typing import PartyID, UserID
 
 from tests.helpers import generate_uuid
@@ -18,10 +18,10 @@ OCCURRED_AT = now()
 USER_ID = UserID(generate_uuid())
 
 
-def test_whereabouts_updated(app: Flask, webhook_for_irc):
+def test_whereabouts_status_updated(app: Flask, webhook_for_irc):
     expected_text = 'Dingo\'s whereabouts changed to "backstage area".'
 
-    event = WhereaboutsUpdatedEvent(
+    event = WhereaboutsStatusUpdatedEvent(
         occurred_at=OCCURRED_AT,
         initiator_id=USER_ID,
         initiator_screen_name='Dingo',
