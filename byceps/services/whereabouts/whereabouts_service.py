@@ -129,7 +129,7 @@ def create_tag(
     sound_filename: str | None = None,
 ) -> WhereaboutsTag:
     """Create a tag."""
-    tag_obj = whereabouts_domain_service.create_tag(
+    tag_obj, event = whereabouts_domain_service.create_tag(
         tag, creator, user, sound_filename=sound_filename
     )
 

@@ -10,7 +10,10 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
+from byceps.events.whereabouts import (
+    WhereaboutsStatusUpdatedEvent,
+    WhereaboutsTagCreatedEvent,
+)
 from byceps.services.party.models import Party
 from byceps.services.user.models.user import User
 from byceps.util.uuid import generate_uuid4, generate_uuid7
@@ -52,12 +55,12 @@ def create_tag(
     *,
     sound_filename: str | None = None,
     suspended: bool = False,
-) -> WhereaboutsTag:
+) -> tuple[WhereaboutsTag, WhereaboutsTagCreatedEvent]:
     """Create a tag."""
     tag_id = generate_uuid4()
     created_at = datetime.utcnow()
 
-    return WhereaboutsTag(
+    tag_obj = WhereaboutsTag(
         id=tag_id,
         created_at=created_at,
         creator=creator,
@@ -66,6 +69,17 @@ def create_tag(
         sound_filename=sound_filename,
         suspended=suspended,
     )
+
+    event = WhereaboutsTagCreatedEvent(
+        occurred_at=created_at,
+        initiator_id=creator.id,
+        initiator_screen_name=creator.screen_name,
+        tag=tag,
+        user_id=user.id,
+        user_screen_name=user.screen_name,
+    )
+
+    return tag_obj, event
 
 
 def set_status(
