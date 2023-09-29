@@ -16,7 +16,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from byceps.database import db
 from byceps.typing import PartyID, UserID
-from byceps.util.uuid import generate_uuid4, generate_uuid7
 
 from .models import WhereaboutsID
 
@@ -30,19 +29,18 @@ class DbWhereabouts(db.Model):
         db.UniqueConstraint('party_id', 'position'),
     )
 
-    id: Mapped[WhereaboutsID] = mapped_column(
-        db.Uuid, default=generate_uuid7, primary_key=True
-    )
+    id: Mapped[WhereaboutsID] = mapped_column(db.Uuid, primary_key=True)
     party_id: Mapped[PartyID] = mapped_column(
         db.UnicodeText, db.ForeignKey('parties.id'), index=True
     )
     description: Mapped[str] = mapped_column(db.UnicodeText)
     position: Mapped[int]
-    hide_if_empty: Mapped[bool] = mapped_column(default=False)
+    hide_if_empty: Mapped[bool]
     secret: Mapped[bool]
 
     def __init__(
         self,
+        whereabouts_id: WhereaboutsID,
         party_id: PartyID,
         description: str,
         position: int,
@@ -50,6 +48,7 @@ class DbWhereabouts(db.Model):
         *,
         secret: bool = False,
     ) -> None:
+        self.id = whereabouts_id
         self.party_id = party_id
         self.description = description
         self.position = position
@@ -68,9 +67,7 @@ class DbWhereaboutsTag(db.Model):
 
     __tablename__ = 'whereabouts_tags'
 
-    id: Mapped[UUID] = mapped_column(
-        db.Uuid, default=generate_uuid4, primary_key=True
-    )
+    id: Mapped[UUID] = mapped_column(db.Uuid, primary_key=True)
     created_at: Mapped[datetime]
     creator_id: Mapped[UserID] = mapped_column(
         db.Uuid, db.ForeignKey('users.id')
@@ -84,6 +81,7 @@ class DbWhereaboutsTag(db.Model):
 
     def __init__(
         self,
+        tag_id: UUID,
         created_at: datetime,
         creator_id: UserID,
         tag: str,
@@ -92,6 +90,7 @@ class DbWhereaboutsTag(db.Model):
         sound_filename: str | None = None,
         suspended: bool = False,
     ) -> None:
+        self.id = tag_id
         self.created_at = created_at
         self.creator_id = creator_id
         self.tag = tag

@@ -18,7 +18,7 @@ from byceps.services.party import party_service
 from byceps.services.party.models import Party
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
-from byceps.util.uuid import generate_uuid7
+from byceps.util.uuid import generate_uuid4, generate_uuid7
 
 from .dbmodels import (
     DbWhereabouts,
@@ -48,6 +48,8 @@ def create_whereabouts(
     secret: bool = False,
 ) -> Whereabouts:
     """Create whereabouts."""
+    whereabouts_id = WhereaboutsID(generate_uuid7())
+
     if position is None:
         whereabouts_list = get_whereabouts_list(party)
         if whereabouts_list:
@@ -56,7 +58,12 @@ def create_whereabouts(
             next_position = 0
 
     db_whereabouts = DbWhereabouts(
-        party.id, description, next_position, hide_if_empty, secret=secret
+        whereabouts_id,
+        party.id,
+        description,
+        next_position,
+        hide_if_empty,
+        secret=secret,
     )
     db.session.add(db_whereabouts)
     db.session.commit()
@@ -113,10 +120,16 @@ def create_tag(
     sound_filename: str | None = None,
 ) -> WhereaboutsTag:
     """Create a tag."""
+    tag_id = generate_uuid4()
     created_at = datetime.utcnow()
 
     db_tag = DbWhereaboutsTag(
-        created_at, creator.id, tag, user.id, sound_filename=sound_filename
+        tag_id,
+        created_at,
+        creator.id,
+        tag,
+        user.id,
+        sound_filename=sound_filename,
     )
     db.session.add(db_tag)
     db.session.commit()
