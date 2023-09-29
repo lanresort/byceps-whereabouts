@@ -12,4 +12,6 @@ from blinker import Namespace
 whereabouts_signals = Namespace()
 
 
-whereabouts_updated = whereabouts_signals.signal('whereabouts-updated')
+whereabouts_status_updated = whereabouts_signals.signal(
+    'whereabouts-status-updated'
+)

@@ -107,4 +107,4 @@ def set_status(user_id):
 
     _, _, event = whereabouts_service.set_status(user, whereabouts)
 
-    whereabouts_signals.whereabouts_updated.send(None, event=event)
+    whereabouts_signals.whereabouts_status_updated.send(None, event=event)
