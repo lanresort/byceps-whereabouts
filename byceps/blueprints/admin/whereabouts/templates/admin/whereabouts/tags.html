@@ -1,5 +1,6 @@
 {% extends 'layout/admin/base.html' %}
 {% from 'macros/admin.html' import render_extra_in_heading %}
+{% from 'macros/admin/user.html' import render_user_avatar_and_admin_link %}
 {% from 'macros/icons.html' import render_icon %}
 {% from 'macros/misc.html' import render_tag %}
 {% from 'macros/user.html' import render_user_avatar_and_name %}
@@ -23,7 +24,7 @@
 
 <div class="box">
   {%- if tags %}
-  <table class="index index--wide">
+  <table class="index index--v-centered index--wide">
     <thead>
       <tr>
         <th>Tag</th>
@@ -43,7 +44,7 @@
           {{ tag.tag }}
           {%- endif %}
         </td>
-        <td>{{ render_user_avatar_and_name(tag.user, size=16) }}</td>
+        <td>{{ render_user_avatar_and_admin_link(tag.user, size=32) }}</td>
         <td>{{ tag.sound_filename|fallback }}</td>
         <td>{{ tag.created_at|datetimeformat }}</td>
         <td>{{ render_user_avatar_and_name(tag.creator, size=16) }}</td>
