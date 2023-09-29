@@ -107,8 +107,8 @@ def _db_entity_to_whereabouts(
 
 def create_tag(
     tag: str,
-    user: User,
     creator: User,
+    user: User,
     *,
     sound_filename: str | None = None,
 ) -> WhereaboutsTag:

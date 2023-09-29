@@ -51,7 +51,7 @@ def tag(user, admin_user):
     sound_filename = 'moin.ogg'
 
     return whereabouts_service.create_tag(
-        tag, user, admin_user, sound_filename=sound_filename
+        tag, admin_user, user, sound_filename=sound_filename
     )
 
 
