@@ -45,8 +45,7 @@ class DbWhereabouts(db.Model):
         description: str,
         position: int,
         hide_if_empty: bool,
-        *,
-        secret: bool = False,
+        secret: bool,
     ) -> None:
         self.id = whereabouts_id
         self.party_id = party_id
@@ -86,9 +85,8 @@ class DbWhereaboutsTag(db.Model):
         creator_id: UserID,
         tag: str,
         user_id: UserID,
-        *,
-        sound_filename: str | None = None,
-        suspended: bool = False,
+        sound_filename: str | None,
+        suspended: bool,
     ) -> None:
         self.id = tag_id
         self.created_at = created_at

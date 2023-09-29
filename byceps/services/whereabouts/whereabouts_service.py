@@ -73,7 +73,7 @@ def _persist_whereabouts(whereabouts: Whereabouts) -> None:
         whereabouts.description,
         whereabouts.position,
         whereabouts.hide_if_empty,
-        secret=whereabouts.secret,
+        whereabouts.secret,
     )
 
     db.session.add(db_whereabouts)
@@ -145,8 +145,8 @@ def _persist_tag(tag: WhereaboutsTag) -> None:
         tag.creator.id,
         tag.tag,
         tag.user.id,
-        sound_filename=tag.sound_filename,
-        suspended=tag.suspended,
+        tag.sound_filename,
+        tag.suspended,
     )
     db.session.add(db_tag)
     db.session.commit()
