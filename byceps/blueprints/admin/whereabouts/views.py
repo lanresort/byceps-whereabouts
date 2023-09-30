@@ -8,7 +8,7 @@ byceps.blueprints.admin.whereabouts.views
 
 from collections import defaultdict
 
-from flask import abort, render_template, request
+from flask import abort, request
 from flask_babel import gettext
 
 from byceps.services.party import party_service
@@ -16,7 +16,7 @@ from byceps.services.whereabouts import whereabouts_service
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.framework.flash import flash_success
 from byceps.util.framework.templating import templated
-from byceps.util.views import permission_required, redirect_to, textified
+from byceps.util.views import permission_required, redirect_to
 
 from .forms import CreateForm
 
@@ -55,17 +55,6 @@ def tags():
     return {
         'tags': tags,
     }
-
-
-@blueprint.get('/tags/export')
-@permission_required('whereabouts.administrate')
-@templated('tags_export.toml')
-@textified
-def tags_export():
-    """Export tags as TOML."""
-    tags = whereabouts_service.get_all_tags()
-
-    return render_template('admin/whereabouts/tags_export.toml', tags=tags)
 
 
 @blueprint.get('/for_party/<party_id>/whereabouts/create')
