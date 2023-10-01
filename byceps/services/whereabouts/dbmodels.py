@@ -97,6 +97,21 @@ class DbWhereaboutsTag(db.Model):
         self.suspended = suspended
 
 
+class DbWhereaboutsUserSound(db.Model):
+    """A user-specific salutation sound."""
+
+    __tablename__ = 'whereabouts_user_sounds'
+
+    user_id: Mapped[UserID] = mapped_column(
+        db.Uuid, db.ForeignKey('users.id'), primary_key=True
+    )
+    filename: Mapped[str] = mapped_column(db.UnicodeText)
+
+    def __init__(self, user_id: UserID, filename: str) -> None:
+        self.user_id = user_id
+        self.filename = filename
+
+
 class DbWhereaboutsStatus(db.Model):
     """A user's most recent whereabouts."""
 

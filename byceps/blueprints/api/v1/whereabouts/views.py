@@ -10,6 +10,7 @@ from flask import abort, jsonify, request
 from pydantic import ValidationError
 
 from byceps.blueprints.api.decorators import api_token_required
+from byceps.services.authn.identity_tag import authn_identity_tag_service
 from byceps.services.party import party_service
 from byceps.services.user import user_service
 from byceps.services.whereabouts import whereabouts_service
@@ -23,24 +24,25 @@ from .models import SetStatus
 blueprint = create_blueprint('whereabouts_api', __name__)
 
 
-@blueprint.get('/tags/<tag_value>')
+@blueprint.get('/tags/<identifier>')
 @api_token_required
-def get_tag(tag_value):
+def get_tag(identifier):
     """Get details for tag."""
-    tag = whereabouts_service.find_tag_by_value(tag_value)
-
-    if tag is None:
+    identity_tag = authn_identity_tag_service.find_tag_by_identifier(identifier)
+    if identity_tag is None:
         return create_empty_json_response(404)
+
+    user_sound = whereabouts_service.find_sound_for_user(identity_tag.user.id)
 
     return jsonify(
         {
-            'tag': tag.tag,
+            'identifier': identity_tag.identifier,
             'user': {
-                'id': tag.user.id,
-                'screen_name': tag.user.screen_name,
-                'avatar_url': tag.user.avatar_url,
+                'id': identity_tag.user.id,
+                'screen_name': identity_tag.user.screen_name,
+                'avatar_url': identity_tag.user.avatar_url,
             },
-            'sound_filename': tag.sound_filename,
+            'sound_filename': user_sound.filename,
         }
     )
 

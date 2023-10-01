@@ -42,6 +42,12 @@ class WhereaboutsTag:
 
 
 @dataclass(frozen=True)
+class WhereaboutsUserSound:
+    user: User
+    filename: str
+
+
+@dataclass(frozen=True)
 class WhereaboutsStatus:
     user: User
     whereabouts_id: WhereaboutsID

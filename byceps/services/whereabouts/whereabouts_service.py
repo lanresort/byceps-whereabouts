@@ -16,6 +16,7 @@ from byceps.services.party import party_service
 from byceps.services.party.models import Party
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
+from byceps.typing import UserID
 
 from . import whereabouts_domain_service
 from .dbmodels import (
@@ -23,6 +24,7 @@ from .dbmodels import (
     DbWhereaboutsStatus,
     DbWhereaboutsTag,
     DbWhereaboutsUpdate,
+    DbWhereaboutsUserSound,
 )
 from .models import (
     Whereabouts,
@@ -30,6 +32,7 @@ from .models import (
     WhereaboutsStatus,
     WhereaboutsTag,
     WhereaboutsUpdate,
+    WhereaboutsUserSound,
 )
 
 
@@ -200,6 +203,43 @@ def _db_entity_to_tag(
         user=user,
         sound_filename=db_tag.sound_filename,
         suspended=db_tag.suspended,
+    )
+
+
+# -------------------------------------------------------------------- #
+# sound
+
+
+def create_user_sound(user: User, filename: str) -> WhereaboutsUserSound:
+    """Set a users-specific sound."""
+    db_user_sound = DbWhereaboutsUserSound(user.id, filename)
+
+    db.session.add(db_user_sound)
+    db.session.commit()
+
+    return _db_entity_to_user_sound(db_user_sound, user)
+
+
+def find_sound_for_user(user_id: UserID) -> WhereaboutsUserSound | None:
+    """Find a sound specific for this user."""
+    db_user_sound = db.session.scalars(
+        select(DbWhereaboutsUserSound).filter_by(user_id=user_id)
+    ).one_or_none()
+
+    if db_user_sound is None:
+        return None
+
+    user = user_service.get_user(db_user_sound.user_id, include_avatar=True)
+
+    return _db_entity_to_user_sound(db_user_sound, user)
+
+
+def _db_entity_to_user_sound(
+    db_user_sound: DbWhereaboutsUserSound, user: User
+) -> WhereaboutsUserSound:
+    return WhereaboutsUserSound(
+        user=user,
+        filename=db_user_sound.filename,
     )
 
 
