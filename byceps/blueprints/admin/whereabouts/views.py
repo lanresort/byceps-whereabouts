@@ -57,6 +57,18 @@ def tags():
     }
 
 
+@blueprint.get('/user_sounds')
+@permission_required('whereabouts.administrate')
+@templated
+def user_sounds():
+    """List user sounds."""
+    user_sounds = whereabouts_service.get_all_user_sounds()
+
+    return {
+        'user_sounds': user_sounds,
+    }
+
+
 @blueprint.get('/for_party/<party_id>/whereabouts/create')
 @permission_required('whereabouts.administrate')
 @templated

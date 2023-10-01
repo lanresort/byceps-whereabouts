@@ -234,6 +234,23 @@ def find_sound_for_user(user_id: UserID) -> WhereaboutsUserSound | None:
     return _db_entity_to_user_sound(db_user_sound, user)
 
 
+def get_all_user_sounds() -> list[WhereaboutsUserSound]:
+    """Return all user sounds."""
+    db_user_sounds = db.session.scalars(select(DbWhereaboutsUserSound)).all()
+
+    user_ids = {db_user_sound.user_id for db_user_sound in db_user_sounds}
+    users_by_id = user_service.get_users_indexed_by_id(
+        user_ids, include_avatars=True
+    )
+
+    return [
+        _db_entity_to_user_sound(
+            db_user_sound, users_by_id[db_user_sound.user_id]
+        )
+        for db_user_sound in db_user_sounds
+    ]
+
+
 def _db_entity_to_user_sound(
     db_user_sound: DbWhereaboutsUserSound, user: User
 ) -> WhereaboutsUserSound:
