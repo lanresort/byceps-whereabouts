@@ -15,7 +15,8 @@ from uuid import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from byceps.database import db
-from byceps.typing import PartyID, UserID
+from byceps.services.party.models import PartyID
+from byceps.services.user.models.user import UserID
 
 from .models import WhereaboutsID
 

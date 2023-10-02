@@ -10,7 +10,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from byceps.typing import PartyID, UserID
+from byceps.services.party.models import PartyID
+from byceps.services.user.models.user import UserID
 
 from .base import _BaseEvent
 

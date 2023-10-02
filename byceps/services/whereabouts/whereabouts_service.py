@@ -15,8 +15,7 @@ from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
 from byceps.services.party import party_service
 from byceps.services.party.models import Party
 from byceps.services.user import user_service
-from byceps.services.user.models.user import User
-from byceps.typing import UserID
+from byceps.services.user.models.user import User, UserID
 
 from . import whereabouts_domain_service
 from .dbmodels import (
