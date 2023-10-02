@@ -1,0 +1,38 @@
+{% extends 'layout/admin/base.html' %}
+{% from 'macros/admin.html' import render_extra_in_heading %}
+{% from 'macros/admin/user.html' import render_user_avatar_and_admin_link %}
+{% from 'macros/misc.html' import render_tag %}
+{% from 'macros/user.html' import render_user_avatar_and_name %}
+{% set current_page = 'whereabouts_admin' %}
+{% set page_title = 'Orga-Verbleib' %}
+
+{% block body %}
+
+<h1>{{ page_title }}</h1>
+
+<h2>User-Sounds {{ render_extra_in_heading(user_sounds|length) }}</h2>
+
+<div class="box">
+  {%- if user_sounds %}
+  <table class="index index--v-centered">
+    <thead>
+      <tr>
+        <th>{{ _('User') }}</th>
+        <th>{{ _('Sound filename') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for user_sound in user_sounds|sort(attribute='user.screen_name') %}
+      <tr>
+        <td>{{ render_user_avatar_and_admin_link(user_sound.user, size=32) }}</td>
+        <td>{{ user_sound.filename|fallback }}</td>
+      </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+  {%- else %}
+  <div class="dimmed-box centered">{{ _('None defined') }}</div>
+  {%- endif %}
+</div>
+
+{%- endblock %}
