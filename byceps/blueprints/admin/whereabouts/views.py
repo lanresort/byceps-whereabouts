@@ -60,7 +60,7 @@ def tags():
 @blueprint.get('/user_sounds')
 @permission_required('whereabouts.administrate')
 @templated
-def user_sounds():
+def user_sound_index():
     """List user sounds."""
     user_sounds = whereabouts_service.get_all_user_sounds()
 
