@@ -13,6 +13,6 @@ from wtforms.validators import InputRequired
 from byceps.util.l10n import LocalizedForm
 
 
-class CreateForm(LocalizedForm):
+class WhereaboutsCreateForm(LocalizedForm):
     description = StringField(lazy_gettext('Description'), [InputRequired()])
     hide_if_empty = BooleanField(lazy_gettext('Hide if empty'))

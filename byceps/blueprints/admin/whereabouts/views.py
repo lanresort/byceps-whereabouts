@@ -18,7 +18,7 @@ from byceps.util.framework.flash import flash_success
 from byceps.util.framework.templating import templated
 from byceps.util.views import permission_required, redirect_to
 
-from .forms import CreateForm
+from .forms import WhereaboutsCreateForm
 
 
 blueprint = create_blueprint('whereabouts_admin', __name__)
@@ -76,7 +76,7 @@ def create_form(party_id, erroneous_form=None):
     """Show form to add whereabouts."""
     party = _get_party_or_404(party_id)
 
-    form = erroneous_form if erroneous_form else CreateForm()
+    form = erroneous_form if erroneous_form else WhereaboutsCreateForm()
 
     return {
         'party': party,
@@ -90,7 +90,7 @@ def create(party_id):
     """Add whereabouts."""
     party = _get_party_or_404(party_id)
 
-    form = CreateForm(request.form)
+    form = WhereaboutsCreateForm(request.form)
     if not form.validate():
         return create_form(form)
 
