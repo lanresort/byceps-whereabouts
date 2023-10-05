@@ -27,7 +27,7 @@ def test_set_status(
     assert status_before is None
 
     response = send_request(
-        api_client, api_client_authz_header, user, whereabouts
+        api_client, api_client_authz_header, user, party, whereabouts
     )
 
     assert response.status_code == 204
@@ -41,8 +41,8 @@ def test_set_status(
     assert status_after.set_at == status_after.set_at
 
 
-def test_unauthorized(api_client, user: User):
-    url = build_url(user)
+def test_unauthorized(api_client, user: User, party: Party):
+    url = build_url(user, party)
     response = api_client.post(url)
 
     assert response.status_code == 401
@@ -56,13 +56,17 @@ def whereabouts(party) -> Whereabouts:
 
 
 def send_request(
-    api_client, api_client_authz_header, user: User, whereabouts: Whereabouts
+    api_client,
+    api_client_authz_header,
+    user: User,
+    party: Party,
+    whereabouts: Whereabouts,
 ):
-    url = build_url(user)
+    url = build_url(user, party)
     payload = {'whereabouts_id': str(whereabouts.id)}
 
     return api_client.post(url, headers=[api_client_authz_header], json=payload)
 
 
-def build_url(user: User) -> str:
-    return f'/api/v1/whereabouts/statuses/{user.id}'
+def build_url(user: User, party: Party) -> str:
+    return f'/api/v1/whereabouts/statuses/{user.id}/{party.id}'

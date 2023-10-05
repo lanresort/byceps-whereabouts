@@ -83,17 +83,18 @@ def get_status(user_id, party_id):
     )
 
 
-@blueprint.post('/statuses/<uuid:user_id>')
+@blueprint.post('/statuses/<uuid:user_id>/<party_id>')
 @api_token_required
 @respond_no_content
-def set_status(user_id):
-    """Set user's status.
-
-    Party is implied by whereabouts ID.
-    """
+def set_status(user_id, party_id):
+    """Set user's status."""
     user = user_service.find_user(user_id)
     if user is None:
         abort(404, 'Unknown user ID')
+
+    party = party_service.find_party(party_id)
+    if user is None:
+        abort(404, 'Unknown party ID')
 
     if not request.is_json:
         abort(415)
@@ -106,6 +107,9 @@ def set_status(user_id):
     whereabouts = whereabouts_service.find_whereabouts(req.whereabouts_id)
     if whereabouts is None:
         abort(400, 'Unknown whereabouts ID')
+
+    if whereabouts.party.id != party.id:
+        abort(400, 'Whereabouts ID does not belong to this party')
 
     _, _, event = whereabouts_service.set_status(user, whereabouts)
 
