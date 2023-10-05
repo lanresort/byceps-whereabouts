@@ -24,16 +24,21 @@ def test_set_status(
     whereabouts: Whereabouts,
 ):
     status_before = whereabouts_service.find_status(user, party)
-    print('\n' + ('-' * 40))
-    print('status before:', status_before)
+    assert status_before is None
 
-    response = send_request(api_client, api_client_authz_header, user, whereabouts)
+    response = send_request(
+        api_client, api_client_authz_header, user, whereabouts
+    )
 
     assert response.status_code == 204
 
     status_after = whereabouts_service.find_status(user, party)
-    print('status after:', status_after)
-
+    assert status_after is not None
+    assert status_after.user.id == user.id
+    assert status_after.user.screen_name == user.screen_name
+    assert status_after.user.avatar_url == user.avatar_url
+    assert status_after.whereabouts_id == whereabouts.id
+    assert status_after.set_at == status_after.set_at
 
 
 def test_unauthorized(api_client, user: User):
@@ -50,7 +55,9 @@ def whereabouts(party) -> Whereabouts:
     return whereabouts_service.create_whereabouts(party, description)
 
 
-def send_request(api_client, api_client_authz_header, user: User, whereabouts: Whereabouts):
+def send_request(
+    api_client, api_client_authz_header, user: User, whereabouts: Whereabouts
+):
     url = build_url(user)
     payload = {'whereabouts_id': str(whereabouts.id)}
 
