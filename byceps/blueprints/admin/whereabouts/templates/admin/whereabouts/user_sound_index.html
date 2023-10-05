@@ -1,6 +1,7 @@
 {% extends 'layout/admin/base.html' %}
 {% from 'macros/admin.html' import render_extra_in_heading %}
 {% from 'macros/admin/user.html' import render_user_avatar_and_admin_link %}
+{% from 'macros/icons.html' import render_icon %}
 {% from 'macros/misc.html' import render_tag %}
 {% from 'macros/user.html' import render_user_avatar_and_name %}
 {% set current_page = 'whereabouts_admin' %}
@@ -10,7 +11,18 @@
 
 <h1>{{ page_title }}</h1>
 
-<h2>User-Sounds {{ render_extra_in_heading(user_sounds|length) }}</h2>
+<div class="row row--space-between">
+  <div>
+    <h2>User Sounds {{ render_extra_in_heading(user_sounds|length) }}</h2>
+  </div>
+  {%- if has_current_user_permission('whereabouts.administrate') %}
+  <div>
+    <div class="button-row button-row--right">
+      <a class="button" href="{{ url_for('.user_sound_create_form') }}">{{ render_icon('add') }} <span>{{ _('Add sound') }}</span></a>
+    </div>
+  </div>
+  {%- endif %}
+</div>
 
 <div class="box">
   {%- if user_sounds %}

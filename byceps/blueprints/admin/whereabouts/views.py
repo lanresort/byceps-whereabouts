@@ -18,7 +18,7 @@ from byceps.util.framework.flash import flash_success
 from byceps.util.framework.templating import templated
 from byceps.util.views import permission_required, redirect_to
 
-from .forms import WhereaboutsCreateForm
+from .forms import UserSoundCreateForm, WhereaboutsCreateForm
 
 
 blueprint = create_blueprint('whereabouts_admin', __name__)
@@ -116,6 +116,36 @@ def user_sound_index():
     return {
         'user_sounds': user_sounds,
     }
+
+
+@blueprint.get('/user_sounds/create')
+@permission_required('whereabouts.administrate')
+@templated
+def user_sound_create_form(erroneous_form=None):
+    """Show form to specify a sound for a user."""
+    form = erroneous_form if erroneous_form else UserSoundCreateForm()
+
+    return {
+        'form': form,
+    }
+
+
+@blueprint.post('/user_sounds')
+@permission_required('whereabouts.administrate')
+def user_sound_create():
+    """Specify a sound for a user."""
+    form = UserSoundCreateForm(request.form)
+    if not form.validate():
+        return user_sound_create_form(form)
+
+    user = form.user.data
+    filename = form.filename.data.strip()
+
+    whereabouts_service.create_user_sound(user, filename)
+
+    flash_success(gettext('The object has been created.'))
+
+    return redirect_to('.user_sound_index')
 
 
 # -------------------------------------------------------------------- #
