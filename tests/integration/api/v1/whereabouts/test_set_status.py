@@ -50,6 +50,11 @@ def test_unauthorized(api_client, user: User, party: Party):
 
 
 @pytest.fixture(scope='module')
+def user(make_user) -> User:
+    return make_user()
+
+
+@pytest.fixture(scope='module')
 def whereabouts(party) -> Whereabouts:
     description = generate_token()
     return whereabouts_service.create_whereabouts(party, description)
