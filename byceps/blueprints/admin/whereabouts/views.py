@@ -24,6 +24,10 @@ from .forms import WhereaboutsCreateForm
 blueprint = create_blueprint('whereabouts_admin', __name__)
 
 
+# -------------------------------------------------------------------- #
+# whereabouts
+
+
 @blueprint.get('/for_party/<party_id>')
 @permission_required('whereabouts.view')
 @templated
@@ -42,30 +46,6 @@ def index(party_id):
         'party': party,
         'whereabouts_list': whereabouts_list,
         'statuses_by_whereabouts': statuses_by_whereabouts,
-    }
-
-
-@blueprint.get('/tags')
-@permission_required('whereabouts.administrate')
-@templated
-def tags():
-    """Show tags."""
-    tags = whereabouts_service.get_all_tags()
-
-    return {
-        'tags': tags,
-    }
-
-
-@blueprint.get('/user_sounds')
-@permission_required('whereabouts.administrate')
-@templated
-def user_sound_index():
-    """List user sounds."""
-    user_sounds = whereabouts_service.get_all_user_sounds()
-
-    return {
-        'user_sounds': user_sounds,
     }
 
 
@@ -104,6 +84,42 @@ def create(party_id):
     flash_success(gettext('The object has been created.'))
 
     return redirect_to('.index', party_id=party.id)
+
+
+# -------------------------------------------------------------------- #
+# tags
+
+
+@blueprint.get('/tags')
+@permission_required('whereabouts.administrate')
+@templated
+def tags():
+    """Show tags."""
+    tags = whereabouts_service.get_all_tags()
+
+    return {
+        'tags': tags,
+    }
+
+
+# -------------------------------------------------------------------- #
+# user sounds
+
+
+@blueprint.get('/user_sounds')
+@permission_required('whereabouts.administrate')
+@templated
+def user_sound_index():
+    """List user sounds."""
+    user_sounds = whereabouts_service.get_all_user_sounds()
+
+    return {
+        'user_sounds': user_sounds,
+    }
+
+
+# -------------------------------------------------------------------- #
+# helpers
 
 
 def _get_party_or_404(party_id):
