@@ -69,4 +69,4 @@ def send_request(api_client, api_client_authz_header, user: User, party: Party):
 
 
 def build_url(user: User, party: Party) -> str:
-    return f'/api/v1/whereabouts/statuses/{user.id}/{party.id}'
+    return f'/v1/whereabouts/statuses/{user.id}/{party.id}'

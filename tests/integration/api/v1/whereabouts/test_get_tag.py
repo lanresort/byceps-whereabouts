@@ -53,7 +53,7 @@ def test_with_known_identifier(
 def test_with_known_identifier_unauthorized(
     api_client, identity_tag: UserIdentityTag, user_sound: WhereaboutsUserSound
 ):
-    url = f'/api/v1/whereabouts/tags/{identity_tag.identifier}'
+    url = f'/v1/whereabouts/tags/{identity_tag.identifier}'
     response = api_client.get(url)
 
     assert response.status_code == 401
@@ -72,5 +72,5 @@ def user_sound(user: User) -> WhereaboutsUserSound:
 
 
 def send_request(api_client, api_client_authz_header, identifier: str):
-    url = f'/api/v1/whereabouts/tags/{identifier}'
+    url = f'/v1/whereabouts/tags/{identifier}'
     return api_client.get(url, headers=[api_client_authz_header])

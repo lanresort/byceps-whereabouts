@@ -74,4 +74,4 @@ def send_request(
 
 
 def build_url(user: User, party: Party) -> str:
-    return f'/api/v1/whereabouts/statuses/{user.id}/{party.id}'
+    return f'/v1/whereabouts/statuses/{user.id}/{party.id}'
