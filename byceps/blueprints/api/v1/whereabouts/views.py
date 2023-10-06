@@ -113,7 +113,8 @@ def set_status(user_id, party_id):
     if whereabouts.party.id != party.id:
         abort(400, 'Whereabouts ID does not belong to this party')
 
-    source_address = ip_address(request.remote_addr)
+    remote_addr = request.remote_addr
+    source_address = ip_address(remote_addr) if remote_addr else None
 
     _, _, event = whereabouts_service.set_status(
         user, whereabouts, source_address=source_address
