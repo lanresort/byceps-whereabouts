@@ -19,6 +19,7 @@ from byceps.services.user.models.user import User
 from byceps.util.uuid import generate_uuid4, generate_uuid7
 
 from .models import (
+    IPAddress,
     Whereabouts,
     WhereaboutsID,
     WhereaboutsStatus,
@@ -83,7 +84,10 @@ def create_tag(
 
 
 def set_status(
-    user: User, whereabouts: Whereabouts
+    user: User,
+    whereabouts: Whereabouts,
+    *,
+    source_address: IPAddress | None = None,
 ) -> tuple[WhereaboutsStatus, WhereaboutsUpdate, WhereaboutsStatusUpdatedEvent]:
     """Set a user's whereabouts."""
     update_id = generate_uuid7()
@@ -100,6 +104,7 @@ def set_status(
         user=user,
         whereabouts_id=whereabouts.id,
         created_at=set_at,
+        source_address=source_address,
     )
 
     event = WhereaboutsStatusUpdatedEvent(

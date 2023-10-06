@@ -26,6 +26,7 @@ from .dbmodels import (
     DbWhereaboutsUserSound,
 )
 from .models import (
+    IPAddress,
     Whereabouts,
     WhereaboutsID,
     WhereaboutsStatus,
@@ -264,11 +265,14 @@ def _db_entity_to_user_sound(
 
 
 def set_status(
-    user: User, whereabouts: Whereabouts
+    user: User,
+    whereabouts: Whereabouts,
+    *,
+    source_address: IPAddress | None = None,
 ) -> tuple[WhereaboutsStatus, WhereaboutsUpdate, WhereaboutsStatusUpdatedEvent]:
     """Set a user's whereabouts."""
     status, update, event = whereabouts_domain_service.set_status(
-        user, whereabouts
+        user, whereabouts, source_address=source_address
     )
 
     _persist_update(status, update)
@@ -292,7 +296,11 @@ def _persist_update(
 
     # update
     db_update = DbWhereaboutsUpdate(
-        update.id, update.user.id, update.whereabouts_id, update.created_at
+        update.id,
+        update.user.id,
+        update.whereabouts_id,
+        update.created_at,
+        update.source_address,
     )
     db.session.add(db_update)
 

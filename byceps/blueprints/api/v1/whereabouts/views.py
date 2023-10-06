@@ -6,6 +6,8 @@ byceps.blueprints.api.v1.whereabouts.views
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
+from ipaddress import ip_address
+
 from flask import abort, jsonify, request
 from pydantic import ValidationError
 
@@ -111,6 +113,10 @@ def set_status(user_id, party_id):
     if whereabouts.party.id != party.id:
         abort(400, 'Whereabouts ID does not belong to this party')
 
-    _, _, event = whereabouts_service.set_status(user, whereabouts)
+    source_address = ip_address(request.remote_addr)
+
+    _, _, event = whereabouts_service.set_status(
+        user, whereabouts, source_address=source_address
+    )
 
     whereabouts_signals.whereabouts_status_updated.send(None, event=event)

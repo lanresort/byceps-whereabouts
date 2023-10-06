@@ -9,16 +9,23 @@ byceps.services.whereabouts.dbmodels
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
+import ipaddress
+from typing import Optional, TYPE_CHECKING
 from uuid import UUID
 
+if TYPE_CHECKING:
+    hybrid_property = property
+else:
+    from sqlalchemy.ext.hybrid import hybrid_property
+
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import Mapped, mapped_column
 
 from byceps.database import db
 from byceps.services.party.models import PartyID
 from byceps.services.user.models.user import UserID
 
-from .models import WhereaboutsID
+from .models import IPAddress, WhereaboutsID
 
 
 class DbWhereabouts(db.Model):
@@ -147,6 +154,9 @@ class DbWhereaboutsUpdate(db.Model):
         db.Uuid, db.ForeignKey('whereabouts.id')
     )
     created_at: Mapped[datetime]
+    _source_address: Mapped[Optional[str]] = mapped_column(  # noqa: UP007
+        'source_address', postgresql.INET
+    )
 
     def __init__(
         self,
@@ -154,8 +164,21 @@ class DbWhereaboutsUpdate(db.Model):
         user_id: UserID,
         whereabouts_id: WhereaboutsID,
         created_at: datetime,
+        source_address: IPAddress | None,
     ) -> None:
         self.id = update_id
         self.user_id = user_id
         self.whereabouts_id = whereabouts_id
         self.created_at = created_at
+        self.source_address = source_address
+
+    @hybrid_property
+    def source_address(self) -> IPAddress | None:
+        if not self._source_address:
+            return None
+
+        return ipaddress.ip_address(self._source_address)
+
+    @source_address.setter
+    def source_address(self, source_address: IPAddress | None) -> None:
+        self._source_address = str(source_address) if source_address else None
