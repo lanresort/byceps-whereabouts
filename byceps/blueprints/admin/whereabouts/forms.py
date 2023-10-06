@@ -16,6 +16,7 @@ from byceps.util.l10n import LocalizedForm
 
 
 class WhereaboutsCreateForm(LocalizedForm):
+    name = StringField(lazy_gettext('Name'), [InputRequired()])
     description = StringField(lazy_gettext('Description'), [InputRequired()])
     hide_if_empty = BooleanField(lazy_gettext('Hide if empty'))
 

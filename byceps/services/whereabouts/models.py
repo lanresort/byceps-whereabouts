@@ -28,6 +28,7 @@ IPAddress = Union[IPv4Address, IPv6Address]
 class Whereabouts:
     id: WhereaboutsID
     party: Party
+    name: str
     description: str
     position: int
     hide_if_empty: bool

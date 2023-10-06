@@ -42,6 +42,7 @@ from .models import (
 
 def create_whereabouts(
     party: Party,
+    name: str,
     description: str,
     *,
     position: int | None = None,
@@ -58,6 +59,7 @@ def create_whereabouts(
 
     whereabouts = whereabouts_domain_service.create_whereabouts(
         party,
+        name,
         description,
         next_position,
         hide_if_empty=hide_if_empty,
@@ -73,6 +75,7 @@ def _persist_whereabouts(whereabouts: Whereabouts) -> None:
     db_whereabouts = DbWhereabouts(
         whereabouts.id,
         whereabouts.party.id,
+        whereabouts.name,
         whereabouts.description,
         whereabouts.position,
         whereabouts.hide_if_empty,
@@ -113,6 +116,7 @@ def _db_entity_to_whereabouts(
     return Whereabouts(
         id=db_whereabouts.id,
         party=party,
+        name=db_whereabouts.name,
         description=db_whereabouts.description,
         position=db_whereabouts.position,
         hide_if_empty=db_whereabouts.hide_if_empty,

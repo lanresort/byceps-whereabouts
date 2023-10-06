@@ -30,6 +30,7 @@ from .models import (
 
 def create_whereabouts(
     party: Party,
+    name: str,
     description: str,
     position: int,
     *,
@@ -42,6 +43,7 @@ def create_whereabouts(
     return Whereabouts(
         id=whereabouts_id,
         party=party,
+        name=name,
         description=description,
         position=position,
         hide_if_empty=hide_if_empty,

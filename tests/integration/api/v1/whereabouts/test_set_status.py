@@ -56,8 +56,8 @@ def user(make_user) -> User:
 
 @pytest.fixture(scope='module')
 def whereabouts(party) -> Whereabouts:
-    description = generate_token()
-    return whereabouts_service.create_whereabouts(party, description)
+    name = description = generate_token()
+    return whereabouts_service.create_whereabouts(party, name, description)
 
 
 def send_request(

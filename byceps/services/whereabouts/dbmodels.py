@@ -33,6 +33,7 @@ class DbWhereabouts(db.Model):
 
     __tablename__ = 'whereabouts'
     __table_args__ = (
+        db.UniqueConstraint('party_id', 'name'),
         db.UniqueConstraint('party_id', 'description'),
         db.UniqueConstraint('party_id', 'position'),
     )
@@ -41,6 +42,7 @@ class DbWhereabouts(db.Model):
     party_id: Mapped[PartyID] = mapped_column(
         db.UnicodeText, db.ForeignKey('parties.id'), index=True
     )
+    name: Mapped[str] = mapped_column(db.UnicodeText, index=True)
     description: Mapped[str] = mapped_column(db.UnicodeText)
     position: Mapped[int]
     hide_if_empty: Mapped[bool]
@@ -50,6 +52,7 @@ class DbWhereabouts(db.Model):
         self,
         whereabouts_id: WhereaboutsID,
         party_id: PartyID,
+        name: str,
         description: str,
         position: int,
         hide_if_empty: bool,
@@ -57,6 +60,7 @@ class DbWhereabouts(db.Model):
     ) -> None:
         self.id = whereabouts_id
         self.party_id = party_id
+        self.name = name
         self.description = description
         self.position = position
         self.hide_if_empty = hide_if_empty

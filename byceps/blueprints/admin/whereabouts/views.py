@@ -74,11 +74,12 @@ def create(party_id):
     if not form.validate():
         return create_form(form)
 
+    name = form.name.data.strip()
     description = form.description.data.strip()
     hide_if_empty = form.hide_if_empty.data
 
     whereabouts_service.create_whereabouts(
-        party, description, hide_if_empty=hide_if_empty
+        party, name, description, hide_if_empty=hide_if_empty
     )
 
     flash_success(gettext('The object has been created.'))

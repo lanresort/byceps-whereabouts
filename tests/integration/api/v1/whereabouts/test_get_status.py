@@ -10,6 +10,8 @@ from byceps.services.user.models.user import User
 from byceps.services.whereabouts import whereabouts_service
 from byceps.services.whereabouts.models import Whereabouts, WhereaboutsStatus
 
+from tests.helpers import generate_token
+
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -54,7 +56,8 @@ def user(make_user) -> User:
 
 @pytest.fixture(scope='module')
 def whereabouts(party: Party) -> Whereabouts:
-    return whereabouts_service.create_whereabouts(party, 'headquarters')
+    name = description = generate_token()
+    return whereabouts_service.create_whereabouts(party, name, description)
 
 
 @pytest.fixture(scope='module')
