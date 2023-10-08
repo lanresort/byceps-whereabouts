@@ -13,7 +13,7 @@ from sqlalchemy import select
 from byceps.database import db, execute_upsert
 from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
 from byceps.services.party import party_service
-from byceps.services.party.models import Party
+from byceps.services.party.models import Party, PartyID
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User, UserID
 
@@ -89,6 +89,22 @@ def _persist_whereabouts(whereabouts: Whereabouts) -> None:
 def find_whereabouts(whereabouts_id: WhereaboutsID) -> Whereabouts | None:
     """Return whereabouts, if found."""
     db_whereabouts = db.session.get(DbWhereabouts, whereabouts_id)
+
+    if db_whereabouts is None:
+        return None
+
+    party = party_service.get_party(db_whereabouts.party_id)
+
+    return _db_entity_to_whereabouts(db_whereabouts, party)
+
+
+def find_whereabouts_by_name(
+    party_id: PartyID, name: str
+) -> Whereabouts | None:
+    """Return whereabouts wi, if found."""
+    db_whereabouts = db.session.scalars(
+        select(DbWhereabouts).filter_by(party_id=party_id).filter_by(name=name)
+    ).one_or_none()
 
     if db_whereabouts is None:
         return None

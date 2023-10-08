@@ -84,7 +84,7 @@ def send_request(
     whereabouts: Whereabouts,
 ):
     url = build_url(user, party)
-    payload = {'whereabouts_id': str(whereabouts.id)}
+    payload = {'whereabouts_name': str(whereabouts.name)}
 
     return api_client.post(url, headers=[api_client_authz_header], json=payload)
 

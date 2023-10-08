@@ -107,12 +107,14 @@ def set_status(user_id, party_id):
     except ValidationError as e:
         abort(400, e.json())
 
-    whereabouts = whereabouts_service.find_whereabouts(req.whereabouts_id)
+    whereabouts = whereabouts_service.find_whereabouts_by_name(
+        party.id, req.whereabouts_name
+    )
     if whereabouts is None:
-        abort(400, 'Unknown whereabouts ID')
+        abort(400, 'Unknown whereabouts name for this party')
 
     if whereabouts.party.id != party.id:
-        abort(400, 'Whereabouts ID does not belong to this party')
+        abort(400, 'Whereabouts name does not belong to this party')
 
     remote_addr = request.remote_addr
     source_address = ip_address(remote_addr) if remote_addr else None
