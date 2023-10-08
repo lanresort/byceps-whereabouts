@@ -77,9 +77,10 @@ def create(party_id):
     name = form.name.data.strip()
     description = form.description.data.strip()
     hide_if_empty = form.hide_if_empty.data
+    secret = form.secret.data
 
     whereabouts_service.create_whereabouts(
-        party, name, description, hide_if_empty=hide_if_empty
+        party, name, description, hide_if_empty=hide_if_empty, secret=secret
     )
 
     flash_success(gettext('The object has been created.'))
