@@ -35,6 +35,7 @@ def test_get_status(
     assert response_data['user']['screen_name'] == user.screen_name
     assert response_data['user']['avatar_url'] == user.avatar_url
     assert response_data['whereabouts']['id'] == str(whereabouts.id)
+    assert response_data['whereabouts']['name'] == whereabouts.name
     assert (
         response_data['whereabouts']['description'] == whereabouts.description
     )

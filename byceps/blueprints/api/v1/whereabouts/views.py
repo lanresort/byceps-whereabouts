@@ -78,6 +78,7 @@ def get_status(user_id, party_id):
             },
             'whereabouts': {
                 'id': whereabouts.id,
+                'name': whereabouts.name,
                 'description': whereabouts.description,
             },
             'set_at': status.set_at.isoformat(),
