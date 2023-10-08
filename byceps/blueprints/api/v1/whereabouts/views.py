@@ -105,7 +105,7 @@ def set_status(user_id, party_id):
     try:
         req = SetStatus.model_validate(request.get_json())
     except ValidationError as e:
-        abort(400, str(e.normalized_messages()))
+        abort(400, e.json())
 
     whereabouts = whereabouts_service.find_whereabouts(req.whereabouts_id)
     if whereabouts is None:

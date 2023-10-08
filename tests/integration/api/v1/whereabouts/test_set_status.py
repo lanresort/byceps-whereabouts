@@ -49,6 +49,22 @@ def test_unauthorized(api_client, user: User, party: Party):
     assert response.json is None
 
 
+def test_missing_request_data(
+    api_client,
+    api_client_authz_header,
+    user: User,
+    party: Party,
+):
+    url = build_url(user, party)
+    payload = {}
+
+    response = api_client.post(
+        url, headers=[api_client_authz_header], json=payload
+    )
+
+    assert response.status_code == 400
+
+
 @pytest.fixture(scope='module')
 def user(make_user) -> User:
     return make_user()
