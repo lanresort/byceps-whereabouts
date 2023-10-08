@@ -15,6 +15,7 @@ register_permissions(
     'whereabouts',
     [
         ('administrate', lazy_gettext('Administrate whereabouts')),
+        ('update', lazy_gettext('Update whereabouts')),
         ('view', lazy_gettext('View whereabouts')),
     ],
 )
