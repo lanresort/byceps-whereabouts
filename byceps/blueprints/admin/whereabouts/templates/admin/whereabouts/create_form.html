@@ -18,6 +18,7 @@
     {{ form_field(form.name, autofocus=true) }}
     {{ form_field(form.description) }}
     {{ form_field_check(form.hide_if_empty) }}
+    {{ form_field_check(form.secret) }}
   </div>
 
   {{ form_buttons(_('Create')) }}

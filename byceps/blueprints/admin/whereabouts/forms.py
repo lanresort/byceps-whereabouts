@@ -19,6 +19,7 @@ class WhereaboutsCreateForm(LocalizedForm):
     name = StringField(lazy_gettext('Name'), [InputRequired()])
     description = StringField(lazy_gettext('Description'), [InputRequired()])
     hide_if_empty = BooleanField(lazy_gettext('Hide if empty'))
+    secret = BooleanField(lazy_gettext('Secret'))
 
 
 def validate_user_screen_name(form, field):
