@@ -67,48 +67,6 @@ class DbWhereabouts(db.Model):
         self.secret = secret
 
 
-class DbWhereaboutsTag(db.Model):
-    """A user tag.
-
-    Can be an identifier stored on an RFID transponder, in a barcode,
-    etc. Used to identify a user against the whereabouts system.
-
-    A user can have multiple tags.
-    """
-
-    __tablename__ = 'whereabouts_tags'
-
-    id: Mapped[UUID] = mapped_column(db.Uuid, primary_key=True)
-    created_at: Mapped[datetime]
-    creator_id: Mapped[UserID] = mapped_column(
-        db.Uuid, db.ForeignKey('users.id')
-    )
-    tag: Mapped[str] = mapped_column(db.UnicodeText, unique=True)
-    user_id: Mapped[UserID] = mapped_column(db.Uuid, db.ForeignKey('users.id'))
-    sound_filename: Mapped[Optional[str]] = mapped_column(  # noqa: UP007
-        db.UnicodeText
-    )
-    suspended: Mapped[bool]
-
-    def __init__(
-        self,
-        tag_id: UUID,
-        created_at: datetime,
-        creator_id: UserID,
-        tag: str,
-        user_id: UserID,
-        sound_filename: str | None,
-        suspended: bool,
-    ) -> None:
-        self.id = tag_id
-        self.created_at = created_at
-        self.creator_id = creator_id
-        self.tag = tag
-        self.user_id = user_id
-        self.sound_filename = sound_filename
-        self.suspended = suspended
-
-
 class DbWhereaboutsUserSound(db.Model):
     """A user-specific salutation sound."""
 

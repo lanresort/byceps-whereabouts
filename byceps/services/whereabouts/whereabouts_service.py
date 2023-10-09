@@ -21,7 +21,6 @@ from . import whereabouts_domain_service
 from .dbmodels import (
     DbWhereabouts,
     DbWhereaboutsStatus,
-    DbWhereaboutsTag,
     DbWhereaboutsUpdate,
     DbWhereaboutsUserSound,
 )
@@ -30,7 +29,6 @@ from .models import (
     Whereabouts,
     WhereaboutsID,
     WhereaboutsStatus,
-    WhereaboutsTag,
     WhereaboutsUpdate,
     WhereaboutsUserSound,
 )
@@ -137,92 +135,6 @@ def _db_entity_to_whereabouts(
         position=db_whereabouts.position,
         hide_if_empty=db_whereabouts.hide_if_empty,
         secret=db_whereabouts.secret,
-    )
-
-
-# -------------------------------------------------------------------- #
-# tags
-
-
-def create_tag(
-    tag: str,
-    creator: User,
-    user: User,
-    *,
-    sound_filename: str | None = None,
-) -> WhereaboutsTag:
-    """Create a tag."""
-    tag_obj, event = whereabouts_domain_service.create_tag(
-        tag, creator, user, sound_filename=sound_filename
-    )
-
-    _persist_tag(tag_obj)
-
-    return tag_obj
-
-
-def _persist_tag(tag: WhereaboutsTag) -> None:
-    db_tag = DbWhereaboutsTag(
-        tag.id,
-        tag.created_at,
-        tag.creator.id,
-        tag.tag,
-        tag.user.id,
-        tag.sound_filename,
-        tag.suspended,
-    )
-    db.session.add(db_tag)
-    db.session.commit()
-
-
-def find_tag_by_value(value: str) -> WhereaboutsTag | None:
-    """Return tag by value."""
-    db_tag = db.session.scalars(
-        select(DbWhereaboutsTag).filter(
-            db.func.lower(DbWhereaboutsTag.tag) == value.lower()
-        )
-    ).one_or_none()
-
-    if db_tag is None:
-        return None
-
-    creator = user_service.get_user(db_tag.creator_id, include_avatar=True)
-    user = user_service.get_user(db_tag.user_id, include_avatar=True)
-
-    return _db_entity_to_tag(db_tag, creator, user)
-
-
-def get_all_tags() -> list[WhereaboutsTag]:
-    """Return all tags."""
-    db_tags = db.session.scalars(select(DbWhereaboutsTag)).all()
-
-    creator_ids = {db_tag.creator_id for db_tag in db_tags}
-    user_ids = {db_tag.user_id for db_tag in db_tags}
-    creators_and_users_by_id = user_service.get_users_indexed_by_id(
-        user_ids.union(creator_ids), include_avatars=True
-    )
-
-    return [
-        _db_entity_to_tag(
-            db_tag,
-            creators_and_users_by_id[db_tag.creator_id],
-            creators_and_users_by_id[db_tag.user_id],
-        )
-        for db_tag in db_tags
-    ]
-
-
-def _db_entity_to_tag(
-    db_tag: DbWhereaboutsTag, creator: User, user: User
-) -> WhereaboutsTag:
-    return WhereaboutsTag(
-        id=db_tag.id,
-        created_at=db_tag.created_at,
-        creator=creator,
-        tag=db_tag.tag,
-        user=user,
-        sound_filename=db_tag.sound_filename,
-        suspended=db_tag.suspended,
     )
 
 

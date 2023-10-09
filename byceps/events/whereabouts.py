@@ -17,13 +17,6 @@ from .base import _BaseEvent
 
 
 @dataclass(frozen=True)
-class WhereaboutsTagCreatedEvent(_BaseEvent):
-    tag: str
-    user_id: UserID
-    user_screen_name: str | None
-
-
-@dataclass(frozen=True)
 class WhereaboutsStatusUpdatedEvent(_BaseEvent):
     party_id: PartyID
     party_title: str

@@ -89,22 +89,6 @@ def create(party_id):
 
 
 # -------------------------------------------------------------------- #
-# tags
-
-
-@blueprint.get('/tags')
-@permission_required('whereabouts.administrate')
-@templated
-def tags():
-    """Show tags."""
-    tags = whereabouts_service.get_all_tags()
-
-    return {
-        'tags': tags,
-    }
-
-
-# -------------------------------------------------------------------- #
 # user sounds
 
 

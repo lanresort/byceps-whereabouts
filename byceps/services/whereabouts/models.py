@@ -36,17 +36,6 @@ class Whereabouts:
 
 
 @dataclass(frozen=True)
-class WhereaboutsTag:
-    id: UUID
-    created_at: datetime
-    creator: User
-    tag: str
-    user: User
-    sound_filename: str | None
-    suspended: bool
-
-
-@dataclass(frozen=True)
 class WhereaboutsUserSound:
     user: User
     filename: str
