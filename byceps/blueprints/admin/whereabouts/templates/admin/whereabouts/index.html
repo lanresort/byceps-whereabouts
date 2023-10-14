@@ -1,7 +1,8 @@
 {% extends 'layout/admin/base.html' %}
 {% from 'macros/admin.html' import render_extra_in_heading %}
+{% from 'macros/admin/user.html' import render_user_admin_link %}
 {% from 'macros/icons.html' import render_icon %}
-{% from 'macros/user.html' import render_user_avatar, render_user_screen_name %}
+{% from 'macros/user.html' import render_user_avatar %}
 {% set current_page = 'whereabouts_admin' %}
 {% set current_page_party = party %}
 {% set page_title = 'Orga-Verbleib' %}
@@ -48,7 +49,7 @@
           <div class="row">
             <div>{{ render_user_avatar(status.user, size=40) }}</div>
             <div>
-              {{ render_user_screen_name(status.user) }}<br>
+              {{ render_user_admin_link(status.user, disguised=True) }}<br>
               <small class="dimmed">{{ _('since') }} {{ status.set_at|timedeltaformat }}</small>
             </div>
           </div>
