@@ -38,7 +38,7 @@
   {%- if whereabouts_list %}
     <div class="grid" style="--column-min-width: 24rem;">
     {%- for whereabouts in whereabouts_list|sort(attribute='position') %}
-      {%- with statuses = statuses_by_whereabouts[whereabouts.id] %}
+      {%- with statuses = recent_statuses_by_whereabouts[whereabouts.id] %}
         {%- if statuses or not whereabouts.hide_if_empty %}
       <div>
         <h2>{{ whereabouts.description }} {{ render_extra_in_heading(statuses|length) }}</h2>
@@ -57,6 +57,15 @@
       {%- endwith %}
     {%- endfor %}
     </div>
+
+    {% if stale_statuses %}
+    <h2>🙁 Long time no see</h2>
+    <div class="box statuses">
+      {%- for status in stale_statuses %}
+      {{ render_user_status(status) }}
+      {%- endfor %}
+    </div>
+    {% endif %}
   {%- else %}
   <div class="box">
     <div class="dimmed-box centered">{{ _('No whereabouts defined.') }}</div>

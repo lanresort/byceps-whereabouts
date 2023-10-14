@@ -7,21 +7,27 @@ byceps.blueprints.admin.whereabouts.views
 """
 
 from collections import defaultdict
+from datetime import datetime, timedelta
 
 from flask import abort, request
 from flask_babel import gettext
 
 from byceps.services.party import party_service
 from byceps.services.whereabouts import whereabouts_service
+from byceps.services.whereabouts.models import WhereaboutsStatus
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.framework.flash import flash_success
 from byceps.util.framework.templating import templated
+from byceps.util.iterables import partition
 from byceps.util.views import permission_required, redirect_to
 
 from .forms import UserSoundCreateForm, WhereaboutsCreateForm
 
 
 blueprint = create_blueprint('whereabouts_admin', __name__)
+
+
+STALE_THRESHOLD = timedelta(hours=12)
 
 
 # -------------------------------------------------------------------- #
@@ -38,14 +44,23 @@ def index(party_id):
     whereabouts_list = whereabouts_service.get_whereabouts_list(party)
 
     statuses = whereabouts_service.get_statuses(party)
-    statuses_by_whereabouts = defaultdict(list)
-    for status in statuses:
-        statuses_by_whereabouts[status.whereabouts_id].append(status)
+
+    now = datetime.utcnow()
+
+    def _is_status_stale(status: WhereaboutsStatus) -> bool:
+        return (now - STALE_THRESHOLD) > status.set_at
+
+    stale_statuses, recent_statuses = partition(statuses, _is_status_stale)
+
+    recent_statuses_by_whereabouts = defaultdict(list)
+    for status in recent_statuses:
+        recent_statuses_by_whereabouts[status.whereabouts_id].append(status)
 
     return {
         'party': party,
         'whereabouts_list': whereabouts_list,
-        'statuses_by_whereabouts': statuses_by_whereabouts,
+        'recent_statuses_by_whereabouts': recent_statuses_by_whereabouts,
+        'stale_statuses': stale_statuses,
     }
 
 
