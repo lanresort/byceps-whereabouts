@@ -46,13 +46,7 @@
           {%- if statuses %}
         <div class="box grid statuses">
             {%- for status in statuses|sort(attribute='set_at') %}
-          <div class="row">
-            <div>{{ render_user_avatar(status.user, size=40) }}</div>
-            <div>
-              {{ render_user_admin_link(status.user, disguised=True) }}<br>
-              <small class="dimmed">{{ _('since') }} {{ status.set_at|timedeltaformat }}</small>
-            </div>
-          </div>
+            {{ render_user_status(status) }}
             {%- endfor %}
         </div>
           {%- else %}
@@ -70,3 +64,13 @@
   {%- endif %}
 
 {%- endblock %}
+
+{% macro render_user_status(status) -%}
+  <div class="row">
+    <div>{{ render_user_avatar(status.user, size=40) }}</div>
+    <div>
+      {{ render_user_admin_link(status.user, disguised=true) }}<br>
+      <small class="dimmed">{{ _('since') }} {{ status.set_at|timedeltaformat }}</small>
+    </div>
+  </div>
+{%- endmacro %}
