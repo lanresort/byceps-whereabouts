@@ -27,7 +27,7 @@ def announce_whereabouts_status_updated(
     webhook: OutgoingWebhook,
 ) -> Announcement | None:
     """Announce that a user's whereabouts has been updated."""
-    user_screen_name = get_screen_name_or_fallback(event.user_screen_name)
+    user_screen_name = get_screen_name_or_fallback(event.user)
 
     text = gettext(
         '%(user_screen_name)s\'s whereabouts changed to "%(whereabouts_description)s".',

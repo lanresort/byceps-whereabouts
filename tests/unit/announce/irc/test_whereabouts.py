@@ -3,33 +3,33 @@
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
+from datetime import datetime
+
 from flask import Flask
 
 from byceps.announce.announce import build_announcement_request
+from byceps.events.base import EventParty
 from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
-from byceps.services.party.models import PartyID
-from byceps.services.user.models.user import UserID
 
-from tests.helpers import generate_uuid
-
-from .helpers import assert_text, now
+from .helpers import assert_text
 
 
-OCCURRED_AT = now()
-USER_ID = UserID(generate_uuid())
-
-
-def test_whereabouts_status_updated(app: Flask, webhook_for_irc):
+def test_whereabouts_status_updated(
+    app: Flask,
+    now: datetime,
+    party: EventParty,
+    make_event_user,
+    webhook_for_irc,
+):
     expected_text = 'Dingo\'s whereabouts changed to "backstage area".'
 
+    user = make_event_user(screen_name='Dingo')
+
     event = WhereaboutsStatusUpdatedEvent(
-        occurred_at=OCCURRED_AT,
-        initiator_id=USER_ID,
-        initiator_screen_name='Dingo',
-        party_id=PartyID('acmecon-2014'),
-        party_title='ACMECon 2014',
-        user_id=USER_ID,
-        user_screen_name='Dingo',
+        occurred_at=now,
+        initiator=user,
+        party=party,
+        user=user,
         whereabouts_description='backstage area',
     )
 

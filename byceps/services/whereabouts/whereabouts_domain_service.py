@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from byceps.events.base import EventParty, EventUser
 from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
 from byceps.services.party.models import Party
 from byceps.services.user.models.user import User
@@ -73,12 +74,9 @@ def set_status(
 
     event = WhereaboutsStatusUpdatedEvent(
         occurred_at=set_at,
-        initiator_id=user.id,
-        initiator_screen_name=user.screen_name,
-        party_id=whereabouts.party.id,
-        party_title=whereabouts.party.title,
-        user_id=user.id,
-        user_screen_name=user.screen_name,
+        initiator=EventUser.from_user(user),
+        party=EventParty.from_party(whereabouts.party),
+        user=EventUser.from_user(user),
         whereabouts_description=whereabouts.description,
     )
 

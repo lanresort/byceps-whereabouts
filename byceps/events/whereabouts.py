@@ -10,16 +10,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from byceps.services.party.models import PartyID
-from byceps.services.user.models.user import UserID
-
-from .base import _BaseEvent
+from .base import _BaseEvent, EventParty, EventUser
 
 
 @dataclass(frozen=True)
 class WhereaboutsStatusUpdatedEvent(_BaseEvent):
-    party_id: PartyID
-    party_title: str
-    user_id: UserID
-    user_screen_name: str | None
+    party: EventParty
+    user: EventUser
     whereabouts_description: str
