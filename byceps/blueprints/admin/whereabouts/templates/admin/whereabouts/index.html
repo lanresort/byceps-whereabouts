@@ -8,61 +8,65 @@
 {% set page_title = 'Orga-Verbleib' %}
 
 {% block head %}
-    <meta http-equiv="refresh" content="10">
-    <style>
-    .grid.statuses {
-      --column-min-width: 8rem;
-    }
+<meta http-equiv="refresh" content="10">
+<style>
+.grid.statuses {
+  --column-min-width: 8rem;
+}
 
-    .statuses .row {
-      gap: 0.5rem;
-    }
-    </style>
+.grid:is(.statuses, .whereabouts) {
+  gap: 1.5rem;
+}
+
+.statuses .row {
+  gap: 0.5rem;
+}
+</style>
 {%- endblock %}
 
 {% block body %}
 
-  <div class="row row--space-between">
-    <div>
-      <h1>{{ page_title }}</h1>
-    </div>
-    {%- if has_current_user_permission('whereabouts.administrate') %}
-    <div>
-      <div class="button-row button-row--right">
-        <a class="button" href="{{ url_for('.create_form', party_id=party.id) }}">{{ render_icon('add') }} <span>{{ _('Add') }}</span></a>
-      </div>
-    </div>
-    {%- endif %}
+<div class="block row row--space-between">
+  <div>
+    <h1 class="title">{{ page_title }}</h1>
   </div>
-
-  {%- if whereabouts_list %}
-    <div class="grid" style="--column-min-width: 24rem;">
-    {%- for whereabouts in whereabouts_list|sort(attribute='position') %}
-      {%- with statuses = recent_statuses_by_whereabouts[whereabouts.id] %}
-        {%- if statuses or not whereabouts.hide_if_empty %}
-      <div>
-        <h2>{{ whereabouts.description }} {{ render_extra_in_heading(statuses|length) }}</h2>
-
-          {%- if statuses %}
-{{ render_statuses(statuses) }}
-          {%- else %}
-        <div class="box dimmed">{{ _('nobody') }}</div>
-          {%- endif %}
-      </div>
-        {%- endif %}
-      {%- endwith %}
-    {%- endfor %}
+  {%- if has_current_user_permission('whereabouts.administrate') %}
+  <div>
+    <div class="button-row is-right-aligned">
+      <a class="button" href="{{ url_for('.create_form', party_id=party.id) }}">{{ render_icon('add') }} <span>{{ _('Add') }}</span></a>
     </div>
-
-    {% if stale_statuses %}
-    <h2>🙁 Long time no see</h2>
-{{ render_statuses(stale_statuses) }}
-    {% endif %}
-  {%- else %}
-  <div class="box">
-    <div class="dimmed-box centered">{{ _('No whereabouts defined.') }}</div>
   </div>
   {%- endif %}
+</div>
+
+{%- if whereabouts_list %}
+  <div class="block grid whereabouts" style="--column-min-width: 24rem;">
+  {%- for whereabouts in whereabouts_list|sort(attribute='position') %}
+    {%- with statuses = recent_statuses_by_whereabouts[whereabouts.id] %}
+      {%- if statuses or not whereabouts.hide_if_empty %}
+    <div>
+      <h2 class="title">{{ whereabouts.description }} {{ render_extra_in_heading(statuses|length) }}</h2>
+
+        {%- if statuses %}
+{{ render_statuses(statuses) }}
+        {%- else %}
+      <div class="box dimmed">{{ _('nobody') }}</div>
+        {%- endif %}
+    </div>
+      {%- endif %}
+    {%- endwith %}
+  {%- endfor %}
+  </div>
+
+  {% if stale_statuses %}
+  <h2 class="title">🙁 Long time no see</h2>
+{{ render_statuses(stale_statuses) }}
+  {% endif %}
+{%- else %}
+<div class="box">
+  <div class="dimmed-box centered">{{ _('No whereabouts defined.') }}</div>
+</div>
+{%- endif %}
 
 {%- endblock %}
 
@@ -75,7 +79,7 @@
 {%- endmacro %}
 
 {% macro render_status(status) -%}
-  <div class="row">
+  <div class="block row">
     <div>{{ render_user_avatar(status.user, size=40) }}</div>
     <div>
       {{ render_user_admin_link(status.user, disguised=true) }}<br>
