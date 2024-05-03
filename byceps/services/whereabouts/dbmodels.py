@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime
 import ipaddress
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 if TYPE_CHECKING:
@@ -116,7 +116,7 @@ class DbWhereaboutsUpdate(db.Model):
         db.Uuid, db.ForeignKey('whereabouts.id')
     )
     created_at: Mapped[datetime]
-    _source_address: Mapped[Optional[str]] = mapped_column(  # noqa: UP007
+    _source_address: Mapped[str | None] = mapped_column(  # noqa: UP007
         'source_address', postgresql.INET
     )
 
