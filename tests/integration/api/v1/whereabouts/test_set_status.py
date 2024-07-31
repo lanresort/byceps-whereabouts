@@ -13,6 +13,9 @@ from byceps.services.whereabouts.models import Whereabouts
 from tests.helpers import generate_token
 
 
+URL = '/v1/whereabouts/statuses'
+
+
 def test_set_status(
     api_client,
     api_client_authz_header,
@@ -38,25 +41,18 @@ def test_set_status(
     assert status_after.set_at == status_after.set_at
 
 
-def test_unauthorized(api_client, user: User, party: Party):
-    url = build_url(user, party)
-    response = api_client.post(url)
+def test_unauthorized(api_client):
+    response = api_client.post(URL)
 
     assert response.status_code == 401
     assert response.json is None
 
 
-def test_missing_request_data(
-    api_client,
-    api_client_authz_header,
-    user: User,
-    party: Party,
-):
-    url = build_url(user, party)
+def test_missing_request_data(api_client, api_client_authz_header):
     payload: dict[str, str] = {}
 
     response = api_client.post(
-        url, headers=[api_client_authz_header], json=payload
+        URL, headers=[api_client_authz_header], json=payload
     )
 
     assert response.status_code == 400
@@ -80,11 +76,10 @@ def send_request(
     party: Party,
     whereabouts: Whereabouts,
 ):
-    url = build_url(user, party)
-    payload = {'whereabouts_name': str(whereabouts.name)}
+    payload = {
+        'user_id': str(user.id),
+        'party_id': str(party.id),
+        'whereabouts_name': str(whereabouts.name),
+    }
 
-    return api_client.post(url, headers=[api_client_authz_header], json=payload)
-
-
-def build_url(user: User, party: Party) -> str:
-    return f'/v1/whereabouts/statuses/{user.id}/{party.id}'
+    return api_client.post(URL, headers=[api_client_authz_header], json=payload)

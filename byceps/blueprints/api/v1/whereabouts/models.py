@@ -10,4 +10,6 @@ from pydantic import BaseModel
 
 
 class SetStatus(BaseModel):
+    user_id: str
+    party_id: str
     whereabouts_name: str

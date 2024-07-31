@@ -86,19 +86,11 @@ def get_status(user_id, party_id):
     )
 
 
-@blueprint.post('/statuses/<uuid:user_id>/<party_id>')
+@blueprint.post('/statuses')
 @api_token_required
 @respond_no_content
-def set_status(user_id, party_id):
+def set_status():
     """Set user's status."""
-    user = user_service.find_user(user_id)
-    if user is None:
-        abort(404, 'Unknown user ID')
-
-    party = party_service.find_party(party_id)
-    if user is None:
-        abort(404, 'Unknown party ID')
-
     if not request.is_json:
         abort(415)
 
@@ -106,6 +98,14 @@ def set_status(user_id, party_id):
         req = SetStatus.model_validate(request.get_json())
     except ValidationError as e:
         abort(400, e.json())
+
+    user = user_service.find_user(req.user_id)
+    if user is None:
+        abort(404, 'Unknown user ID')
+
+    party = party_service.find_party(req.party_id)
+    if user is None:
+        abort(404, 'Unknown party ID')
 
     whereabouts = whereabouts_service.find_whereabouts_by_name(
         party.id, req.whereabouts_name
