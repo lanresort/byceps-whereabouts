@@ -13,9 +13,6 @@ from byceps.services.whereabouts.models import Whereabouts
 from tests.helpers import generate_token
 
 
-CONTENT_TYPE_JSON = 'application/json'
-
-
 def test_set_status(
     api_client,
     api_client_authz_header,
