@@ -53,7 +53,7 @@ def test_missing_request_data(
     party: Party,
 ):
     url = build_url(user, party)
-    payload = {}
+    payload: dict[str, str] = {}
 
     response = api_client.post(
         url, headers=[api_client_authz_header], json=payload
