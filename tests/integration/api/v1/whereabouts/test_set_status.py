@@ -16,7 +16,7 @@ from tests.helpers import generate_token
 URL = '/v1/whereabouts/statuses'
 
 
-def test_set_status(
+def test_success(
     api_client,
     api_client_authz_header,
     user: User,
@@ -48,7 +48,7 @@ def test_unauthorized(api_client):
     assert response.json is None
 
 
-def test_missing_request_data(api_client, api_client_authz_header):
+def test_empty_payload(api_client, api_client_authz_header):
     payload: dict[str, str] = {}
 
     response = api_client.post(
