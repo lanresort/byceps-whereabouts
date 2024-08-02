@@ -26,9 +26,13 @@ def test_success(
     status_before = whereabouts_service.find_status(user, party)
     assert status_before is None
 
-    response = send_request(
-        api_client, api_client_authz_header, user, party, whereabouts
-    )
+    payload = {
+        'user_id': str(user.id),
+        'party_id': str(party.id),
+        'whereabouts_name': str(whereabouts.name),
+    }
+
+    response = send_request(api_client, api_client_authz_header, payload)
 
     assert response.status_code == 204
 
@@ -51,9 +55,7 @@ def test_unauthorized(api_client):
 def test_empty_payload(api_client, api_client_authz_header):
     payload: dict[str, str] = {}
 
-    response = api_client.post(
-        URL, headers=[api_client_authz_header], json=payload
-    )
+    response = send_request(api_client, api_client_authz_header, payload)
 
     assert response.status_code == 400
 
@@ -69,17 +71,5 @@ def whereabouts(party) -> Whereabouts:
     return whereabouts_service.create_whereabouts(party, name, description)
 
 
-def send_request(
-    api_client,
-    api_client_authz_header,
-    user: User,
-    party: Party,
-    whereabouts: Whereabouts,
-):
-    payload = {
-        'user_id': str(user.id),
-        'party_id': str(party.id),
-        'whereabouts_name': str(whereabouts.name),
-    }
-
+def send_request(api_client, api_client_authz_header, payload: dict[str, str]):
     return api_client.post(URL, headers=[api_client_authz_header], json=payload)
