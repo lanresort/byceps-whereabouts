@@ -60,6 +60,60 @@ def test_empty_payload(api_client, api_client_authz_header):
     assert response.status_code == 400
 
 
+def test_unknown_user_id(
+    api_client,
+    api_client_authz_header,
+    party: Party,
+    whereabouts: Whereabouts,
+):
+    unknown_user_id = '00000000000000000000000000000000'
+
+    payload = {
+        'user_id': unknown_user_id,
+        'party_id': str(party.id),
+        'whereabouts_name': str(whereabouts.name),
+    }
+
+    response = send_request(api_client, api_client_authz_header, payload)
+
+    assert response.status_code == 400
+
+
+def test_unknown_party_id(
+    api_client,
+    api_client_authz_header,
+    user: User,
+    whereabouts: Whereabouts,
+):
+    payload = {
+        'user_id': str(user.id),
+        'party_id': 'unknown-party-id',
+        'whereabouts_name': str(whereabouts.name),
+    }
+
+    response = send_request(api_client, api_client_authz_header, payload)
+
+    assert response.status_code == 400
+
+
+def test_unknown_whereabouts_name(
+    api_client,
+    api_client_authz_header,
+    user: User,
+    party: Party,
+    whereabouts: Whereabouts,
+):
+    payload = {
+        'user_id': str(user.id),
+        'party_id': str(party.id),
+        'whereabouts_name': 'unknown-whereabouts-name',
+    }
+
+    response = send_request(api_client, api_client_authz_header, payload)
+
+    assert response.status_code == 400
+
+
 @pytest.fixture(scope='module')
 def user(make_user) -> User:
     return make_user()
