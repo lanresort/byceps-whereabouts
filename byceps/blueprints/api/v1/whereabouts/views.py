@@ -101,11 +101,11 @@ def set_status():
 
     user = user_service.find_user(req.user_id)
     if user is None:
-        abort(404, 'Unknown user ID')
+        abort(400, 'Unknown user ID')
 
     party = party_service.find_party(req.party_id)
     if party is None:
-        abort(404, 'Unknown party ID')
+        abort(400, 'Unknown party ID')
 
     whereabouts = whereabouts_service.find_whereabouts_by_name(
         party.id, req.whereabouts_name
