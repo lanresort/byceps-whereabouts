@@ -20,7 +20,7 @@ from byceps.signals import whereabouts as whereabouts_signals
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.views import create_empty_json_response, respond_no_content
 
-from .models import SetStatus
+from .models import SetStatusRequestModel
 
 
 blueprint = create_blueprint('whereabouts_api', __name__)
@@ -97,7 +97,7 @@ def set_status():
         abort(415)
 
     try:
-        req = SetStatus.model_validate(request.get_json())
+        req = SetStatusRequestModel.model_validate(request.get_json())
     except ValidationError as e:
         abort(400, e.json())
 
