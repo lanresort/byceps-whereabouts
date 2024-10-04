@@ -15,7 +15,7 @@ from byceps.blueprints.api.decorators import api_token_required
 from byceps.services.authn.identity_tag import authn_identity_tag_service
 from byceps.services.party import party_service
 from byceps.services.user import user_service
-from byceps.services.whereabouts import whereabouts_service
+from byceps.services.whereabouts import whereabouts_service, whereabouts_sound_service
 from byceps.signals import whereabouts as whereabouts_signals
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.views import create_empty_json_response, respond_no_content
@@ -34,7 +34,9 @@ def get_tag(identifier):
     if identity_tag is None:
         return create_empty_json_response(404)
 
-    user_sound = whereabouts_service.find_sound_for_user(identity_tag.user.id)
+    user_sound = whereabouts_sound_service.find_sound_for_user(
+        identity_tag.user.id
+    )
 
     return jsonify(
         {

@@ -8,7 +8,7 @@ import pytest
 from byceps.services.authn.identity_tag import authn_identity_tag_service
 from byceps.services.authn.identity_tag.models import UserIdentityTag
 from byceps.services.user.models.user import User
-from byceps.services.whereabouts import whereabouts_service
+from byceps.services.whereabouts import whereabouts_sound_service
 from byceps.services.whereabouts.models import WhereaboutsUserSound
 
 
@@ -68,7 +68,7 @@ def identity_tag(user: User, admin_user: User) -> UserIdentityTag:
 
 @pytest.fixture(scope='module')
 def user_sound(user: User) -> WhereaboutsUserSound:
-    return whereabouts_service.create_user_sound(user, 'moin.ogg')
+    return whereabouts_sound_service.create_user_sound(user, 'moin.ogg')
 
 
 def send_request(api_client, api_client_authz_header, identifier: str):

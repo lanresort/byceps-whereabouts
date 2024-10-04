@@ -13,7 +13,7 @@ from flask import abort, request
 from flask_babel import gettext
 
 from byceps.services.party import party_service
-from byceps.services.whereabouts import whereabouts_service
+from byceps.services.whereabouts import whereabouts_service, whereabouts_sound_service
 from byceps.services.whereabouts.models import WhereaboutsStatus
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.framework.flash import flash_success
@@ -142,7 +142,7 @@ def user_sound_create():
     user = form.user.data
     filename = form.filename.data.strip()
 
-    whereabouts_service.create_user_sound(user, filename)
+    whereabouts_sound_service.create_user_sound(user, filename)
 
     flash_success(gettext('The object has been created.'))
 

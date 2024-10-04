@@ -11,7 +11,7 @@ from wtforms import BooleanField, StringField
 from wtforms.validators import InputRequired, ValidationError
 
 from byceps.services.user import user_service
-from byceps.services.whereabouts import whereabouts_service
+from byceps.services.whereabouts import whereabouts_sound_service
 from byceps.util.l10n import LocalizedForm
 
 
@@ -32,7 +32,7 @@ def validate_user_screen_name(form, field):
     if user is None:
         raise ValidationError(lazy_gettext('Unknown username'))
 
-    existing_user_sound = whereabouts_service.find_sound_for_user(user.id)
+    existing_user_sound = whereabouts_sound_service.find_sound_for_user(user.id)
     if existing_user_sound:
         raise ValidationError(
             lazy_gettext('The user already has a sound assigned.')
