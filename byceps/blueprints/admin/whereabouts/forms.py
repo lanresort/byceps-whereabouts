@@ -8,11 +8,16 @@ byceps.blueprints.admin.whereabouts.forms
 
 from flask_babel import lazy_gettext
 from wtforms import BooleanField, StringField
-from wtforms.validators import InputRequired, ValidationError
+from wtforms.validators import InputRequired, Optional, ValidationError
 
 from byceps.services.user import user_service
 from byceps.services.whereabouts import whereabouts_sound_service
 from byceps.util.l10n import LocalizedForm
+
+
+class ClientUpdateForm(LocalizedForm):
+    location = StringField(lazy_gettext('Location'), [Optional()])
+    description = StringField(lazy_gettext('Description'), [Optional()])
 
 
 class WhereaboutsCreateForm(LocalizedForm):

@@ -30,7 +30,7 @@ from byceps.util.views import (
     respond_no_content,
 )
 
-from .forms import UserSoundCreateForm, WhereaboutsCreateForm
+from .forms import ClientUpdateForm, UserSoundCreateForm, WhereaboutsCreateForm
 
 
 blueprint = create_blueprint('whereabouts_admin', __name__)
@@ -161,6 +161,41 @@ def client_candidate_delete(client_id):
     whereabouts_client_service.delete_client_candidate(client, initiator)
 
     flash_success(gettext('Client candidate has been deleted.'))
+
+
+@blueprint.get('/client/<uuid:client_id>/update')
+@permission_required('whereabouts.administrate')
+@templated
+def client_update_form(client_id, erroneous_form=None):
+    """Show form to update a client."""
+    client = _get_client_or_404(client_id)
+
+    form = erroneous_form if erroneous_form else ClientUpdateForm(obj=client)
+
+    return {
+        'client': client,
+        'form': form,
+    }
+
+
+@blueprint.post('/webhooks/<uuid:client_id>')
+@permission_required('whereabouts.administrate')
+def client_update(client_id):
+    """Update the webhook."""
+    client = _get_client_or_404(client_id)
+
+    form = ClientUpdateForm(request.form)
+    if not form.validate():
+        return client_update_form(client.id, form)
+
+    location = form.location.data.strip() or None
+    description = form.description.data.strip() or None
+
+    whereabouts_client_service.update_client(client, location, description)
+
+    flash_success(gettext('The object has been updated.'))
+
+    return redirect_to('.client_index')
 
 
 @blueprint.delete('/clients/<uuid:client_id>')
