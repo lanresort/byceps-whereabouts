@@ -5,9 +5,9 @@ BYCEPS Whereabouts Extension
 This is a BYCEPS_-based whereabouts extension for the Verbleiber_
 client.
 
-The Verbleiber system allows organizers at our LANresort_ (and
-presumably NorthCon_) events to log their presence so other organizers
-can locate them more easily if they are needed.
+The Verbleiber system allows organizers at our LANresort_ (and, by now,
+also NorthCon_) events to log their presence so other organizers can
+locate them more easily if they are needed.
 
 Users of the system access USB-based hardware clients connected to mini
 computers, authenticating via RFID transponders and specifying their new
