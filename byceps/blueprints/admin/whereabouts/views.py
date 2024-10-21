@@ -112,7 +112,7 @@ def create(party_id):
 @templated
 def user_sound_index():
     """List user sounds."""
-    user_sounds = whereabouts_service.get_all_user_sounds()
+    user_sounds = whereabouts_sound_service.get_all_user_sounds()
 
     return {
         'user_sounds': user_sounds,
