@@ -9,7 +9,7 @@ byceps.blueprints.admin.whereabouts.views
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from flask import abort, request
+from flask import abort, g, request
 from flask_babel import gettext
 
 from byceps.services.party import party_service
@@ -19,11 +19,16 @@ from byceps.services.whereabouts import (
     whereabouts_sound_service,
 )
 from byceps.services.whereabouts.models import WhereaboutsStatus
+from byceps.signals import whereabouts as whereabouts_signals
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.framework.flash import flash_success
 from byceps.util.framework.templating import templated
 from byceps.util.iterables import partition
-from byceps.util.views import permission_required, redirect_to
+from byceps.util.views import (
+    permission_required,
+    redirect_to,
+    respond_no_content,
+)
 
 from .forms import UserSoundCreateForm, WhereaboutsCreateForm
 
@@ -130,6 +135,49 @@ def client_index():
     }
 
 
+@blueprint.post('/clients/<uuid:client_id>/approve')
+@permission_required('whereabouts.administrate')
+@respond_no_content
+def client_approve(client_id):
+    """Approve a client."""
+    client = _get_client_or_404(client_id)
+    initiator = g.user
+
+    _, event = whereabouts_client_service.approve_client(client, initiator)
+
+    flash_success(gettext('Client has been approved.'))
+
+    whereabouts_signals.whereabouts_client_approved.send(None, event=event)
+
+
+@blueprint.delete('/client_candidates/<uuid:client_id>')
+@permission_required('whereabouts.administrate')
+@respond_no_content
+def client_candidate_delete(client_id):
+    """Delete a client candidate."""
+    client = _get_client_or_404(client_id)
+    initiator = g.user
+
+    whereabouts_client_service.delete_client_candidate(client, initiator)
+
+    flash_success(gettext('Client candidate has been deleted.'))
+
+
+@blueprint.delete('/clients/<uuid:client_id>')
+@permission_required('whereabouts.administrate')
+@respond_no_content
+def client_delete(client_id):
+    """Delete a client."""
+    client = _get_client_or_404(client_id)
+    initiator = g.user
+
+    _, event = whereabouts_client_service.delete_client(client, initiator)
+
+    flash_success(gettext('Client has been deleted.'))
+
+    whereabouts_signals.whereabouts_client_deleted.send(None, event=event)
+
+
 # -------------------------------------------------------------------- #
 # user sounds
 
@@ -187,3 +235,12 @@ def _get_party_or_404(party_id):
         abort(404)
 
     return party
+
+
+def _get_client_or_404(client_id):
+    client = whereabouts_client_service.find_client(client_id)
+
+    if client is None:
+        abort(404)
+
+    return client
