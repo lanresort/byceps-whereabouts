@@ -17,6 +17,8 @@ from byceps.events.whereabouts import (
     WhereaboutsClientApprovedEvent,
     WhereaboutsClientRegisteredEvent,
     WhereaboutsClientDeletedEvent,
+    WhereaboutsClientSignedOffEvent,
+    WhereaboutsClientSignedOnEvent,
 )
 from byceps.services.user.models.user import User
 from byceps.util.uuid import generate_uuid7
@@ -99,3 +101,31 @@ def delete_client(
     )
 
     return deleted_client, event
+
+
+def sign_on_client(client: WhereaboutsClient) -> WhereaboutsClientSignedOnEvent:
+    """Sign on a client."""
+    signed_on_at = datetime.utcnow()
+
+    event = WhereaboutsClientSignedOnEvent(
+        occurred_at=signed_on_at,
+        initiator=None,
+        client_id=client.id,
+    )
+
+    return event
+
+
+def sign_off_client(
+    client: WhereaboutsClient,
+) -> WhereaboutsClientSignedOffEvent:
+    """Sign off a client."""
+    signed_on_at = datetime.utcnow()
+
+    event = WhereaboutsClientSignedOffEvent(
+        occurred_at=signed_on_at,
+        initiator=None,
+        client_id=client.id,
+    )
+
+    return event

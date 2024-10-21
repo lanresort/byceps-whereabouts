@@ -14,6 +14,8 @@ from byceps.events.whereabouts import (
     WhereaboutsClientApprovedEvent,
     WhereaboutsClientDeletedEvent,
     WhereaboutsClientRegisteredEvent,
+    WhereaboutsClientSignedOffEvent,
+    WhereaboutsClientSignedOnEvent,
     WhereaboutsStatusUpdatedEvent,
 )
 from byceps.services.whereabouts.models import WhereaboutsClientID
@@ -77,6 +79,38 @@ def test_whereabouts_client_deleted(
     event = WhereaboutsClientDeletedEvent(
         occurred_at=now,
         initiator=initiator,
+        client_id=CLIENT_ID,
+    )
+
+    actual = build_announcement_request(event, webhook_for_irc)
+
+    assert_text(actual, expected_text)
+
+
+def test_whereabouts_client_signed_on(
+    app: Flask, now: datetime, webhook_for_irc
+):
+    expected_text = f'Whereabouts client "{CLIENT_ID}" has signed on.'
+
+    event = WhereaboutsClientSignedOnEvent(
+        occurred_at=now,
+        initiator=None,
+        client_id=CLIENT_ID,
+    )
+
+    actual = build_announcement_request(event, webhook_for_irc)
+
+    assert_text(actual, expected_text)
+
+
+def test_whereabouts_client_signed_off(
+    app: Flask, now: datetime, webhook_for_irc
+):
+    expected_text = f'Whereabouts client "{CLIENT_ID}" has signed off.'
+
+    event = WhereaboutsClientSignedOffEvent(
+        occurred_at=now,
+        initiator=None,
         client_id=CLIENT_ID,
     )
 

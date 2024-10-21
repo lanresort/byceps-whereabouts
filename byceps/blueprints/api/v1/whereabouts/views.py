@@ -20,7 +20,7 @@ from byceps.services.whereabouts import (
     whereabouts_service,
     whereabouts_sound_service,
 )
-from byceps.services.whereabouts.models import IPAddress
+from byceps.services.whereabouts.models import IPAddress, WhereaboutsClient
 from byceps.signals import whereabouts as whereabouts_signals
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.views import (
@@ -75,6 +75,39 @@ def get_client_registration_status(client_id):
         response_data = {'status': 'rejected'}
 
     return jsonify(response_data)
+
+
+@blueprint.post('/client/sign_on')
+@api_token_required
+@respond_no_content
+def sign_on_client():
+    """Sign on a client."""
+    client = _get_approved_client()
+
+    source_address = _get_source_ip_address(request)
+
+    event = whereabouts_client_service.sign_on_client(
+        client, source_address=source_address
+    )
+
+    whereabouts_signals.whereabouts_client_signed_on.send(None, event=event)
+
+
+@blueprint.post('/client/sign_off')
+@api_token_required
+@respond_no_content
+def sign_off_client():
+    """Sign off a client."""
+    client = _get_approved_client()
+
+    source_address = _get_source_ip_address(request)
+
+    event = whereabouts_client_service.sign_off_client(
+        client, source_address=source_address
+    )
+
+    whereabouts_signals.whereabouts_client_signed_off.send(None, event=event)
+
 
 @blueprint.get('/tags/<identifier>')
 @api_token_required
@@ -183,3 +216,33 @@ def set_status():
 def _get_source_ip_address(request: Request) -> IPAddress | None:
     remote_addr = request.remote_addr
     return ip_address(remote_addr) if remote_addr else None
+
+
+def _get_approved_client() -> WhereaboutsClient:
+    client = _get_client()
+
+    if not client.approved:
+        abort(400, 'Invalid client token')
+
+    return client
+
+
+def _get_client() -> WhereaboutsClient:
+    client = _find_client()
+
+    if not client:
+        abort(400, 'Invalid client token')
+
+    return client
+
+
+def _find_client() -> WhereaboutsClient | None:
+    token = request.headers.get('x-whereabouts-client-token')
+    if not token:
+        return None
+
+    client = whereabouts_client_service.find_client_by_token(token)
+    if not client:
+        return None
+
+    return client

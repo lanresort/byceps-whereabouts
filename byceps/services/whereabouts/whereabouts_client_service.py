@@ -16,6 +16,8 @@ from byceps.events.whereabouts import (
     WhereaboutsClientApprovedEvent,
     WhereaboutsClientRegisteredEvent,
     WhereaboutsClientDeletedEvent,
+    WhereaboutsClientSignedOffEvent,
+    WhereaboutsClientSignedOnEvent,
 )
 from byceps.services.user.models.user import User
 
@@ -139,6 +141,40 @@ def delete_client(
     )
 
     return deleted_client, event
+
+
+def sign_on_client(
+    client: WhereaboutsClient,
+    *,
+    source_address: IPAddress | None = None,
+) -> WhereaboutsClientSignedOnEvent:
+    """Sign on a client."""
+    event = whereabouts_client_domain_service.sign_on_client(client)
+
+    log.info(
+        'Whereabouts client signed on',
+        id=str(client.id),
+        source_address=str(source_address),
+    )
+
+    return event
+
+
+def sign_off_client(
+    client: WhereaboutsClient,
+    *,
+    source_address: IPAddress | None = None,
+) -> WhereaboutsClientSignedOffEvent:
+    """Sign off a client."""
+    event = whereabouts_client_domain_service.sign_off_client(client)
+
+    log.info(
+        'Whereabouts client signed off',
+        id=str(client.id),
+        source_address=str(source_address),
+    )
+
+    return event
 
 
 def _persist_client_update(updated_client: WhereaboutsClient) -> None:

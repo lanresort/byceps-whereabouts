@@ -36,6 +36,16 @@ class WhereaboutsClientDeletedEvent(_WhereaboutsClientEvent):
 
 
 @dataclass(frozen=True)
+class WhereaboutsClientSignedOnEvent(_WhereaboutsClientEvent):
+    pass
+
+
+@dataclass(frozen=True)
+class WhereaboutsClientSignedOffEvent(_WhereaboutsClientEvent):
+    pass
+
+
+@dataclass(frozen=True)
 class WhereaboutsStatusUpdatedEvent(_BaseEvent):
     party: EventParty
     user: EventUser
