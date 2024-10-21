@@ -25,8 +25,55 @@ from byceps.database import db
 from byceps.services.party.models import PartyID
 from byceps.services.user.models.user import UserID
 
-from .models import IPAddress, WhereaboutsID
+from .models import (
+    IPAddress,
+    WhereaboutsClientAuthorityStatus,
+    WhereaboutsClientID,
+    WhereaboutsID,
+)
 
+
+class DbWhereaboutsClient(db.Model):
+    """A client that can send updates on users' whereabouts."""
+
+    __tablename__ = 'whereabouts_clients'
+
+    id: Mapped[WhereaboutsClientID] = mapped_column(db.Uuid, primary_key=True)
+    registered_at: Mapped[datetime]
+    button_count: Mapped[int]
+    audio_output: Mapped[bool]
+    _authority_status: Mapped[str] = mapped_column(
+        'authority_status', db.UnicodeText
+    )
+    token: Mapped[str | None] = mapped_column(
+        db.UnicodeText, unique=True, index=True
+    )
+    location: Mapped[str | None] = mapped_column(db.UnicodeText)
+    description: Mapped[str | None] = mapped_column(db.UnicodeText)
+
+    def __init__(
+        self,
+        client_id: WhereaboutsClientID,
+        registered_at: datetime,
+        button_count: int,
+        audio_output: bool,
+        authority_status: WhereaboutsClientAuthorityStatus,
+    ) -> None:
+        self.id = client_id
+        self.registered_at = registered_at
+        self.button_count = button_count
+        self.audio_output = audio_output
+        self.authority_status = authority_status
+
+    @hybrid_property
+    def authority_status(self) -> WhereaboutsClientAuthorityStatus:
+        return WhereaboutsClientAuthorityStatus[self._authority_status]
+
+    @authority_status.setter
+    def authority_status(
+        self, authority_status: WhereaboutsClientAuthorityStatus
+    ) -> None:
+        self._authority_status = authority_status.name
 
 class DbWhereabouts(db.Model):
     """A user's potential whereabouts."""
