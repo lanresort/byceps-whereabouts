@@ -13,7 +13,11 @@ from flask import abort, request
 from flask_babel import gettext
 
 from byceps.services.party import party_service
-from byceps.services.whereabouts import whereabouts_service, whereabouts_sound_service
+from byceps.services.whereabouts import (
+    whereabouts_client_service,
+    whereabouts_service,
+    whereabouts_sound_service,
+)
 from byceps.services.whereabouts.models import WhereaboutsStatus
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.framework.flash import flash_success
@@ -101,6 +105,29 @@ def create(party_id):
     flash_success(gettext('The object has been created.'))
 
     return redirect_to('.index', party_id=party.id)
+
+
+# -------------------------------------------------------------------- #
+# clients
+
+
+@blueprint.get('/clients')
+@permission_required('whereabouts.administrate')
+@templated
+def client_index():
+    """List clients."""
+    clients = whereabouts_client_service.get_all_clients()
+
+    pending_clients, handled_clients = partition(clients, lambda c: c.pending)
+    approved_clients, deleted_clients = partition(
+        handled_clients, lambda c: c.approved
+    )
+
+    return {
+        'pending_clients': pending_clients,
+        'approved_clients': approved_clients,
+        'deleted_clients': deleted_clients,
+    }
 
 
 # -------------------------------------------------------------------- #

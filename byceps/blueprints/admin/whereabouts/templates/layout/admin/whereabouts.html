@@ -8,6 +8,7 @@
 {{
   render_main_tabs(
     Navigation(None)
+      .add_item(url_for('.client_index'), 'Clients', id='clients', required_permission='whereabouts.administrate')
       .add_item(url_for('.user_sound_index'), 'User Sounds', id='user_sounds', required_permission='whereabouts.administrate')
     , current_tab
   )
