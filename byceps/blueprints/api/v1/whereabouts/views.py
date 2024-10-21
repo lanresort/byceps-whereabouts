@@ -8,7 +8,7 @@ byceps.blueprints.api.v1.whereabouts.views
 
 from ipaddress import ip_address
 
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, Request
 from pydantic import ValidationError
 
 from byceps.blueprints.api.decorators import api_token_required
@@ -16,6 +16,7 @@ from byceps.services.authn.identity_tag import authn_identity_tag_service
 from byceps.services.party import party_service
 from byceps.services.user import user_service
 from byceps.services.whereabouts import whereabouts_service, whereabouts_sound_service
+from byceps.services.whereabouts.models import IPAddress
 from byceps.signals import whereabouts as whereabouts_signals
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.views import create_empty_json_response, respond_no_content
@@ -118,11 +119,18 @@ def set_status():
     if whereabouts.party.id != party.id:
         abort(400, 'Whereabouts name does not belong to this party')
 
-    remote_addr = request.remote_addr
-    source_address = ip_address(remote_addr) if remote_addr else None
+    source_address = _get_source_ip_address(request)
 
     _, _, event = whereabouts_service.set_status(
         user, whereabouts, source_address=source_address
     )
 
     whereabouts_signals.whereabouts_status_updated.send(None, event=event)
+
+
+# helpers
+
+
+def _get_source_ip_address(request: Request) -> IPAddress | None:
+    remote_addr = request.remote_addr
+    return ip_address(remote_addr) if remote_addr else None
