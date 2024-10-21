@@ -62,6 +62,13 @@ class WhereaboutsClient:
             self.authority_status == WhereaboutsClientAuthorityStatus.approved
         )
 
+
+@dataclass(frozen=True)
+class WhereaboutsClientWithLivelinessStatus(WhereaboutsClient):
+    signed_on: bool
+    latest_activity_at: datetime
+
+
 @dataclass(frozen=True)
 class Whereabouts:
     id: WhereaboutsID

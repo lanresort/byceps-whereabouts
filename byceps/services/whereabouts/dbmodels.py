@@ -75,6 +75,19 @@ class DbWhereaboutsClient(db.Model):
     ) -> None:
         self._authority_status = authority_status.name
 
+
+class DbWhereaboutsClientLivelinessStatus(db.Model):
+    """A client's liveliness status."""
+
+    __tablename__ = 'whereabouts_client_liveliness_statuses'
+
+    client_id: Mapped[WhereaboutsClientID] = mapped_column(
+        db.Uuid, db.ForeignKey('whereabouts_clients.id'), primary_key=True
+    )
+    signed_on: Mapped[bool]
+    latest_activity_at: Mapped[datetime]
+
+
 class DbWhereabouts(db.Model):
     """A user's potential whereabouts."""
 
