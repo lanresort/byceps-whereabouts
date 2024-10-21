@@ -19,6 +19,9 @@ from byceps.services.party.models import Party
 from byceps.services.user.models.user import User
 
 
+WhereaboutsClientConfigID = NewType('WhereaboutsClientConfigID', UUID)
+
+
 WhereaboutsClientID = NewType('WhereaboutsClientID', UUID)
 
 
@@ -26,6 +29,14 @@ WhereaboutsID = NewType('WhereaboutsID', UUID)
 
 
 IPAddress = IPv4Address | IPv6Address
+
+
+@dataclass(frozen=True)
+class WhereaboutsClientConfig:
+    id: WhereaboutsClientConfigID
+    title: str
+    description: str | None
+    content: str
 
 
 WhereaboutsClientAuthorityStatus = Enum(
@@ -51,6 +62,7 @@ class WhereaboutsClient:
     token: str | None
     location: str | None
     description: str | None
+    config_id: WhereaboutsClientConfigID | None
 
     @property
     def pending(self) -> bool:

@@ -28,9 +28,35 @@ from byceps.services.user.models.user import UserID
 from .models import (
     IPAddress,
     WhereaboutsClientAuthorityStatus,
+    WhereaboutsClientConfigID,
     WhereaboutsClientID,
     WhereaboutsID,
 )
+
+
+class DbWhereaboutsClientConfig(db.Model):
+    """A client configuration."""
+
+    __tablename__ = 'whereabouts_client_configs'
+
+    id: Mapped[WhereaboutsClientConfigID] = mapped_column(
+        db.Uuid, primary_key=True
+    )
+    title: Mapped[str] = mapped_column(db.UnicodeText)
+    description: Mapped[str | None] = mapped_column(db.UnicodeText)
+    content: Mapped[str] = mapped_column(db.UnicodeText)
+
+    def __init__(
+        self,
+        config_id: WhereaboutsClientConfigID,
+        title: str,
+        description: str | None,
+        content: str,
+    ) -> None:
+        self.id = config_id
+        self.title = title
+        self.description = description
+        self.content = content
 
 
 class DbWhereaboutsClient(db.Model):
@@ -50,6 +76,9 @@ class DbWhereaboutsClient(db.Model):
     )
     location: Mapped[str | None] = mapped_column(db.UnicodeText)
     description: Mapped[str | None] = mapped_column(db.UnicodeText)
+    config_id: Mapped[WhereaboutsClientConfigID | None] = mapped_column(
+        db.Uuid, db.ForeignKey('whereabouts_client_configs.id')
+    )
 
     def __init__(
         self,

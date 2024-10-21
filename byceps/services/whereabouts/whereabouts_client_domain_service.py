@@ -27,9 +27,26 @@ from .models import (
     WhereaboutsClient,
     WhereaboutsClientAuthorityStatus,
     WhereaboutsClientCandidate,
+    WhereaboutsClientConfig,
+    WhereaboutsClientConfigID,
     WhereaboutsClientID,
 )
 
+
+def create_client_config(
+    title: str,
+    description: str | None,
+    content: str,
+) -> WhereaboutsClientConfig:
+    """Create a client configuration."""
+    config_id = WhereaboutsClientConfigID(generate_uuid7())
+
+    return WhereaboutsClientConfig(
+        id=config_id,
+        title=title,
+        description=description,
+        content=content,
+    )
 
 
 def register_client(
@@ -71,6 +88,7 @@ def approve_client(
         token=token,
         location=None,
         description=None,
+        config_id=None,
     )
 
     event = WhereaboutsClientApprovedEvent(

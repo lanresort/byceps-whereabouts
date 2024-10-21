@@ -27,6 +27,7 @@ from byceps.services.user.models.user import User
 from . import whereabouts_client_domain_service
 from .dbmodels import (
     DbWhereaboutsClient,
+    DbWhereaboutsClientConfig,
     DbWhereaboutsClientLivelinessStatus,
 )
 from .models import (
@@ -34,12 +35,62 @@ from .models import (
     WhereaboutsClient,
     WhereaboutsClientAuthorityStatus,
     WhereaboutsClientCandidate,
+    WhereaboutsClientConfig,
     WhereaboutsClientID,
     WhereaboutsClientWithLivelinessStatus,
 )
 
 
 log = structlog.get_logger()
+
+
+# -------------------------------------------------------------------- #
+# client config
+
+
+def create_client_config(
+    title: str,
+    description: str | None,
+    content: str,
+) -> WhereaboutsClientConfig:
+    """Create a client configuration."""
+    config = whereabouts_client_domain_service.create_client_config(
+        title, description, content
+    )
+
+    _persist_config(config)
+
+    return config
+
+
+def _persist_config(config: WhereaboutsClientConfig) -> None:
+    db_config = DbWhereaboutsClientConfig(
+        config.id,
+        config.title,
+        config.description,
+        config.content,
+    )
+
+    db.session.add(db_config)
+    db.session.commit()
+
+
+def get_all_client_configs() -> list[WhereaboutsClientConfig]:
+    """Return all client configurations."""
+    db_configs = db.session.scalars(select(DbWhereaboutsClientConfig)).all()
+
+    return [_db_entity_to_client_config(db_config) for db_config in db_configs]
+
+
+def _db_entity_to_client_config(
+    db_config: DbWhereaboutsClientConfig,
+) -> WhereaboutsClientConfig:
+    return WhereaboutsClientConfig(
+        id=db_config.id,
+        title=db_config.title,
+        description=db_config.description,
+        content=db_config.content,
+    )
 
 
 # -------------------------------------------------------------------- #
