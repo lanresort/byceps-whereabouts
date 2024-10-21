@@ -8,24 +8,73 @@ byceps.blueprints.api.v1.whereabouts.views
 
 from ipaddress import ip_address
 
-from flask import abort, jsonify, request, Request
+from flask import abort, jsonify, request, Request, url_for
 from pydantic import ValidationError
 
 from byceps.blueprints.api.decorators import api_token_required
 from byceps.services.authn.identity_tag import authn_identity_tag_service
 from byceps.services.party import party_service
 from byceps.services.user import user_service
-from byceps.services.whereabouts import whereabouts_service, whereabouts_sound_service
+from byceps.services.whereabouts import (
+    whereabouts_client_service,
+    whereabouts_service,
+    whereabouts_sound_service,
+)
 from byceps.services.whereabouts.models import IPAddress
 from byceps.signals import whereabouts as whereabouts_signals
 from byceps.util.framework.blueprint import create_blueprint
-from byceps.util.views import create_empty_json_response, respond_no_content
+from byceps.util.views import (
+    create_empty_json_response,
+    respond_no_content,
+    respond_no_content_with_location,
+)
 
-from .models import SetStatusRequestModel
+from .models import RegisterClientRequestModel, SetStatusRequestModel
 
 
 blueprint = create_blueprint('whereabouts_api', __name__)
 
+
+@blueprint.post('/client/register')
+@api_token_required
+@respond_no_content_with_location
+def register_client():
+    """Register a client."""
+    if not request.is_json:
+        abort(415)
+
+    try:
+        req = RegisterClientRequestModel.model_validate(request.get_json())
+    except ValidationError as e:
+        abort(400, e.json())
+
+    source_address = _get_source_ip_address(request)
+
+    candidate, event = whereabouts_client_service.register_client(
+        req.button_count, req.audio_output, source_address=source_address
+    )
+
+    whereabouts_signals.whereabouts_client_registered.send(None, event=event)
+
+    return url_for('.get_client_registration_status', client_id=candidate.id)
+
+
+@blueprint.get('/client/registration_status/<client_id>')
+@api_token_required
+def get_client_registration_status(client_id):
+    """Get a client's registration status."""
+    client = whereabouts_client_service.find_client(client_id)
+    if not client:
+        abort(404)
+
+    if client.pending:
+        response_data = {'status': 'pending'}
+    elif client.approved:
+        response_data = {'status': 'approved', 'token': client.token}
+    else:
+        response_data = {'status': 'rejected'}
+
+    return jsonify(response_data)
 
 @blueprint.get('/tags/<identifier>')
 @api_token_required
