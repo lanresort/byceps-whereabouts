@@ -1,19 +1,18 @@
-{% extends 'layout/admin/base.html' %}
+{% extends 'layout/admin/whereabouts.html' %}
 {% from 'macros/admin.html' import render_extra_in_heading %}
 {% from 'macros/admin/user.html' import render_user_avatar_and_admin_link %}
 {% from 'macros/icons.html' import render_icon %}
 {% from 'macros/misc.html' import render_tag %}
 {% from 'macros/user.html' import render_user_avatar_and_name %}
 {% set current_page = 'whereabouts_admin' %}
-{% set page_title = 'Orga-Verbleib' %}
+{% set current_tab = 'user_sounds' %}
+{% set page_title = 'User Sounds' %}
 
 {% block body %}
 
-<h1 class="title">{{ page_title }}</h1>
-
 <div class="block row row--space-between">
   <div>
-    <h2 class="title">User Sounds {{ render_extra_in_heading(user_sounds|length) }}</h2>
+    <h2 class="title">{{ page_title }} {{ render_extra_in_heading(user_sounds|length) }}</h2>
   </div>
   {%- if has_current_user_permission('whereabouts.administrate') %}
   <div>
