@@ -2,7 +2,7 @@
 byceps.signals.whereabouts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:Copyright: 2022-2024 Jochen Kupperschmidt
+:Copyright: 2022-2025 Jochen Kupperschmidt
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
