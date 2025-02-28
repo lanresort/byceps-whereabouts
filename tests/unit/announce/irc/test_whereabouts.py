@@ -6,9 +6,8 @@
 from datetime import datetime
 from uuid import UUID
 
-from flask import Flask
-
 from byceps.announce.announce import build_announcement_request
+from byceps.byceps_app import BycepsApp
 from byceps.events.base import EventParty
 from byceps.events.whereabouts import (
     WhereaboutsClientApprovedEvent,
@@ -27,7 +26,7 @@ CLIENT_ID = WhereaboutsClientID(UUID('371aba195a922c74c5b1273766bca016'))
 
 
 def test_whereabouts_client_registered(
-    app: Flask,
+    app: BycepsApp,
     now: datetime,
     make_event_user,
     webhook_for_irc,
@@ -46,7 +45,7 @@ def test_whereabouts_client_registered(
 
 
 def test_whereabouts_client_approved(
-    app: Flask,
+    app: BycepsApp,
     now: datetime,
     make_event_user,
     webhook_for_irc,
@@ -67,7 +66,7 @@ def test_whereabouts_client_approved(
 
 
 def test_whereabouts_client_deleted(
-    app: Flask,
+    app: BycepsApp,
     now: datetime,
     make_event_user,
     webhook_for_irc,
@@ -88,7 +87,7 @@ def test_whereabouts_client_deleted(
 
 
 def test_whereabouts_client_signed_on(
-    app: Flask, now: datetime, webhook_for_irc
+    app: BycepsApp, now: datetime, webhook_for_irc
 ):
     expected_text = f'Whereabouts client "{CLIENT_ID}" has signed on.'
 
@@ -104,7 +103,7 @@ def test_whereabouts_client_signed_on(
 
 
 def test_whereabouts_client_signed_off(
-    app: Flask, now: datetime, webhook_for_irc
+    app: BycepsApp, now: datetime, webhook_for_irc
 ):
     expected_text = f'Whereabouts client "{CLIENT_ID}" has signed off.'
 
@@ -120,7 +119,7 @@ def test_whereabouts_client_signed_off(
 
 
 def test_whereabouts_status_updated(
-    app: Flask,
+    app: BycepsApp,
     now: datetime,
     party: EventParty,
     make_event_user,
