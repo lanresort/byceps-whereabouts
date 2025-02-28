@@ -7,7 +7,10 @@ import pytest
 
 from byceps.services.party.models import Party
 from byceps.services.user.models.user import User
-from byceps.services.whereabouts import whereabouts_service
+from byceps.services.whereabouts import (
+    whereabouts_client_service,
+    whereabouts_service,
+)
 from byceps.services.whereabouts.models import Whereabouts, WhereaboutsStatus
 
 from tests.helpers import generate_token
@@ -51,6 +54,22 @@ def test_unauthorized(api_client, user: User, party: Party):
 
 
 @pytest.fixture(scope='module')
+def whereabouts_client(admin):
+    client, _ = whereabouts_client_service.register_client(
+        button_count=3, audio_output=False
+    )
+    approved_client, _ = whereabouts_client_service.approve_client(
+        client, admin
+    )
+    return approved_client
+
+
+@pytest.fixture(scope='module')
+def admin(make_user) -> User:
+    return make_user()
+
+
+@pytest.fixture(scope='module')
 def user(make_user) -> User:
     return make_user()
 
@@ -62,8 +81,12 @@ def whereabouts(party: Party) -> Whereabouts:
 
 
 @pytest.fixture(scope='module')
-def status(user: User, whereabouts: Whereabouts) -> WhereaboutsStatus:
-    status, _, _ = whereabouts_service.set_status(user, whereabouts)
+def status(
+    whereabouts_client, user: User, whereabouts: Whereabouts
+) -> WhereaboutsStatus:
+    status, _, _ = whereabouts_service.set_status(
+        whereabouts_client, user, whereabouts
+    )
     return status
 
 
