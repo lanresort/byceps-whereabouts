@@ -131,9 +131,7 @@
 {%- endif %}
 
 {%- if not pending_clients and not approved_clients and not deleted_clients %}
-<div class="box">
-  <div class="dimmed-box centered">{{ _('No clients registered.') }}</div>
-</div>
+<div class="box no-data-message">{{ _('No clients registered.') }}</div>
 {%- endif %}
 
 {%- endblock %}

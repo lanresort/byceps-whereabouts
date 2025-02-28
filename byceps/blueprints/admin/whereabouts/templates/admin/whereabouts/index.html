@@ -63,9 +63,7 @@
 {{ render_statuses(stale_statuses) }}
   {% endif %}
 {%- else %}
-<div class="box">
-  <div class="dimmed-box centered">{{ _('No whereabouts defined.') }}</div>
-</div>
+<div class="box no-data-message">{{ _('No whereabouts defined.') }}</div>
 {%- endif %}
 
 {%- endblock %}
