@@ -176,6 +176,8 @@ def get_status(user_id, party_id):
 @respond_no_content
 def set_status():
     """Set user's status."""
+    client = _get_approved_client()
+
     if not request.is_json:
         abort(415)
 
@@ -204,7 +206,7 @@ def set_status():
     source_address = _get_source_ip_address(request)
 
     _, _, event = whereabouts_service.set_status(
-        user, whereabouts, source_address=source_address
+        client, user, whereabouts, source_address=source_address
     )
 
     whereabouts_signals.whereabouts_status_updated.send(None, event=event)
