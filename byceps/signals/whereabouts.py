@@ -22,6 +22,13 @@ whereabouts_client_deleted = whereabouts_signals.signal(
     'whereabouts-client-deleted'
 )
 
+whereabouts_client_signed_on = whereabouts_signals.signal(
+    'whereabouts-client-signed-on'
+)
+whereabouts_client_signed_off = whereabouts_signals.signal(
+    'whereabouts-client-signed-off'
+)
+
 whereabouts_status_updated = whereabouts_signals.signal(
     'whereabouts-status-updated'
 )

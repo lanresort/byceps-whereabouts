@@ -20,6 +20,8 @@ from byceps.events.whereabouts import (
     WhereaboutsClientApprovedEvent,
     WhereaboutsClientDeletedEvent,
     WhereaboutsClientRegisteredEvent,
+    WhereaboutsClientSignedOffEvent,
+    WhereaboutsClientSignedOnEvent,
     WhereaboutsStatusUpdatedEvent,
 )
 from byceps.services.webhooks.models import Announcement, OutgoingWebhook
@@ -76,6 +78,36 @@ def announce_whereabouts_client_deleted(
     text = gettext(
         '%(initiator_screen_name)s has deleted whereabouts client "%(client_id)s".',
         initiator_screen_name=initiator_screen_name,
+        client_id=event.client_id,
+    )
+
+    return Announcement(text)
+
+
+@with_locale
+def announce_whereabouts_client_signed_on(
+    event_name: str,
+    event: WhereaboutsClientSignedOnEvent,
+    webhook: OutgoingWebhook,
+) -> Announcement | None:
+    """Announce that a whereabouts client has signed on."""
+    text = gettext(
+        'Whereabouts client "%(client_id)s" has signed on.',
+        client_id=event.client_id,
+    )
+
+    return Announcement(text)
+
+
+@with_locale
+def announce_whereabouts_client_signed_off(
+    event_name: str,
+    event: WhereaboutsClientSignedOffEvent,
+    webhook: OutgoingWebhook,
+) -> Announcement | None:
+    """Announce that a whereabouts client has signed off."""
+    text = gettext(
+        'Whereabouts client "%(client_id)s" has signed off.',
         client_id=event.client_id,
     )
 
