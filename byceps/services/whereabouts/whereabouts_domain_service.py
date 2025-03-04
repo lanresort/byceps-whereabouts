@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from byceps.events.base import EventParty, EventUser
+from byceps.services.core.events import EventParty, EventUser
 from byceps.services.party.models import Party
 from byceps.services.user.models.user import User
 from byceps.util.uuid import generate_uuid7

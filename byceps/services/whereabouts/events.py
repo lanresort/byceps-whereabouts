@@ -10,9 +10,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from byceps.services.core.events import _BaseEvent, EventParty, EventUser
 from byceps.services.whereabouts.models import WhereaboutsClientID
-
-from .base import _BaseEvent, EventParty, EventUser
 
 
 @dataclass(frozen=True)

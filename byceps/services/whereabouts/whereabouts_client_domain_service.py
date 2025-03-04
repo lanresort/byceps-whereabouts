@@ -12,7 +12,7 @@ import dataclasses
 from datetime import datetime
 import secrets
 
-from byceps.events.base import EventUser
+from byceps.services.core.events import EventUser
 from byceps.services.user.models.user import User
 from byceps.util.uuid import generate_uuid7
 
