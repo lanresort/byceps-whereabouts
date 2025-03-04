@@ -1,8 +1,8 @@
 """
-byceps.announce.handlers.guest_server
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+byceps.announce.handlers.whereabouts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Announce guest server events.
+Announce whereabouts events.
 
 :Copyright: 2022-2025 Jochen Kupperschmidt
 :License: Revised BSD (see `LICENSE` file for details)
