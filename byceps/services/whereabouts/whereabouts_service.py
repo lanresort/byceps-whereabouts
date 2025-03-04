@@ -11,7 +11,6 @@ from __future__ import annotations
 from sqlalchemy import select
 
 from byceps.database import db, execute_upsert
-from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
 from byceps.services.party import party_service
 from byceps.services.party.models import Party, PartyID
 from byceps.services.user import user_service
@@ -23,6 +22,7 @@ from .dbmodels import (
     DbWhereaboutsStatus,
     DbWhereaboutsUpdate,
 )
+from .events import WhereaboutsStatusUpdatedEvent
 from .models import (
     IPAddress,
     Whereabouts,

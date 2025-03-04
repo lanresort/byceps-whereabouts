@@ -15,13 +15,6 @@ from sqlalchemy import select
 import structlog
 
 from byceps.database import db
-from byceps.events.whereabouts import (
-    WhereaboutsClientApprovedEvent,
-    WhereaboutsClientRegisteredEvent,
-    WhereaboutsClientDeletedEvent,
-    WhereaboutsClientSignedOffEvent,
-    WhereaboutsClientSignedOnEvent,
-)
 from byceps.services.user.models.user import User
 
 from . import whereabouts_client_domain_service
@@ -29,6 +22,13 @@ from .dbmodels import (
     DbWhereaboutsClient,
     DbWhereaboutsClientConfig,
     DbWhereaboutsClientLivelinessStatus,
+)
+from .events import (
+    WhereaboutsClientApprovedEvent,
+    WhereaboutsClientRegisteredEvent,
+    WhereaboutsClientDeletedEvent,
+    WhereaboutsClientSignedOffEvent,
+    WhereaboutsClientSignedOnEvent,
 )
 from .models import (
     IPAddress,

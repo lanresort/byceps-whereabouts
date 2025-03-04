@@ -11,11 +11,11 @@ from __future__ import annotations
 from datetime import datetime
 
 from byceps.events.base import EventParty, EventUser
-from byceps.events.whereabouts import WhereaboutsStatusUpdatedEvent
 from byceps.services.party.models import Party
 from byceps.services.user.models.user import User
 from byceps.util.uuid import generate_uuid7
 
+from .events import WhereaboutsStatusUpdatedEvent
 from .models import (
     IPAddress,
     Whereabouts,

@@ -9,7 +9,7 @@ from uuid import UUID
 from byceps.announce.announce import build_announcement_request
 from byceps.byceps_app import BycepsApp
 from byceps.events.base import EventParty
-from byceps.events.whereabouts import (
+from byceps.services.whereabouts.events import (
     WhereaboutsClientApprovedEvent,
     WhereaboutsClientDeletedEvent,
     WhereaboutsClientRegisteredEvent,
