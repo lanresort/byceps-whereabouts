@@ -14,12 +14,12 @@ from flask_babel import gettext
 
 from byceps.services.party import party_service
 from byceps.services.whereabouts import (
+    signals as whereabouts_signals,
     whereabouts_client_service,
     whereabouts_service,
     whereabouts_sound_service,
 )
 from byceps.services.whereabouts.models import WhereaboutsStatus
-from byceps.signals import whereabouts as whereabouts_signals
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.framework.flash import flash_success
 from byceps.util.framework.templating import templated

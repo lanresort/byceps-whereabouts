@@ -1,6 +1,6 @@
 """
-byceps.signals.whereabouts
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+byceps.services.whereabouts.signals
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :Copyright: 2022-2025 Jochen Kupperschmidt
 :License: Revised BSD (see `LICENSE` file for details)
