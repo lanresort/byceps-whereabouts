@@ -1,6 +1,6 @@
 """
-byceps.announce.handlers.whereabouts
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+byceps.services.whereabouts.announcing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Announce whereabouts events.
 
@@ -16,7 +16,9 @@ from byceps.announce.helpers import (
     get_screen_name_or_fallback,
     with_locale,
 )
-from byceps.services.whereabouts.events import (
+from byceps.services.webhooks.models import Announcement, OutgoingWebhook
+
+from .events import (
     WhereaboutsClientApprovedEvent,
     WhereaboutsClientDeletedEvent,
     WhereaboutsClientRegisteredEvent,
@@ -24,7 +26,6 @@ from byceps.services.whereabouts.events import (
     WhereaboutsClientSignedOnEvent,
     WhereaboutsStatusUpdatedEvent,
 )
-from byceps.services.webhooks.models import Announcement, OutgoingWebhook
 
 
 # client
