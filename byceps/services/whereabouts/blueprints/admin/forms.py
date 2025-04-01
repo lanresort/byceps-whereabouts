@@ -1,6 +1,6 @@
 """
-byceps.blueprints.admin.whereabouts.forms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+byceps.services.whereabouts.blueprints.admin.forms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :Copyright: 2022-2025 Jochen Kupperschmidt
 :License: Revised BSD (see `LICENSE` file for details)
