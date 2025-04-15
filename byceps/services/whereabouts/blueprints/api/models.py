@@ -1,6 +1,6 @@
 """
-byceps.blueprints.api.v1.whereabouts.models
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+byceps.services.whereabouts.blueprints.api.models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :Copyright: 2022-2025 Jochen Kupperschmidt
 :License: Revised BSD (see `LICENSE` file for details)
