@@ -11,7 +11,6 @@ from ipaddress import ip_address
 from flask import abort, jsonify, request, Request, url_for
 from pydantic import ValidationError
 
-from byceps.blueprints.api.decorators import api_token_required
 from byceps.services.authn.identity_tag import authn_identity_tag_service
 from byceps.services.party import party_service
 from byceps.services.user import user_service
@@ -24,6 +23,7 @@ from byceps.services.whereabouts import (
 from byceps.services.whereabouts.models import IPAddress, WhereaboutsClient
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.views import (
+    api_token_required,
     create_empty_json_response,
     respond_no_content,
     respond_no_content_with_location,
