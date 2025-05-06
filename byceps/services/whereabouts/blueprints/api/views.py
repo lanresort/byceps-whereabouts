@@ -8,7 +8,7 @@ byceps.services.whereabouts.blueprints.api.views
 
 from ipaddress import ip_address
 
-from flask import abort, jsonify, request, Request, url_for
+from flask import abort, g, jsonify, request, Request, url_for
 from pydantic import ValidationError
 
 from byceps.services.authn.identity_tag import authn_identity_tag_service
@@ -20,7 +20,7 @@ from byceps.services.whereabouts import (
     whereabouts_service,
     whereabouts_sound_service,
 )
-from byceps.services.whereabouts.models import IPAddress, WhereaboutsClient
+from byceps.services.whereabouts.models import IPAddress
 from byceps.util.framework.blueprint import create_blueprint
 from byceps.util.views import (
     api_token_required,
@@ -28,6 +28,7 @@ from byceps.util.views import (
     respond_no_content,
 )
 
+from .decorators import client_token_required
 from .models import RegisterClientRequestModel, SetStatusRequestModel
 
 
@@ -81,39 +82,35 @@ def get_client_registration_status(client_id):
 
 
 @blueprint.post('/client/sign_on')
-@api_token_required
+@client_token_required
 @respond_no_content
 def sign_on_client():
     """Sign on a client."""
-    client = _get_approved_client()
-
     source_address = _get_source_ip_address(request)
 
     event = whereabouts_client_service.sign_on_client(
-        client, source_address=source_address
+        g.client, source_address=source_address
     )
 
     whereabouts_signals.whereabouts_client_signed_on.send(None, event=event)
 
 
 @blueprint.post('/client/sign_off')
-@api_token_required
+@client_token_required
 @respond_no_content
 def sign_off_client():
     """Sign off a client."""
-    client = _get_approved_client()
-
     source_address = _get_source_ip_address(request)
 
     event = whereabouts_client_service.sign_off_client(
-        client, source_address=source_address
+        g.client, source_address=source_address
     )
 
     whereabouts_signals.whereabouts_client_signed_off.send(None, event=event)
 
 
 @blueprint.get('/tags/<identifier>')
-@api_token_required
+@client_token_required
 def get_tag(identifier):
     """Get details for tag."""
     identity_tag = authn_identity_tag_service.find_tag_by_identifier(identifier)
@@ -138,7 +135,7 @@ def get_tag(identifier):
 
 
 @blueprint.get('/statuses/<uuid:user_id>/<party_id>')
-@api_token_required
+@client_token_required
 def get_status(user_id, party_id):
     """Get user's status at party."""
     user = user_service.find_user(user_id)
@@ -175,12 +172,10 @@ def get_status(user_id, party_id):
 
 
 @blueprint.post('/statuses')
-@api_token_required
+@client_token_required
 @respond_no_content
 def set_status():
     """Set user's status."""
-    client = _get_approved_client()
-
     if not request.is_json:
         abort(415)
 
@@ -209,7 +204,7 @@ def set_status():
     source_address = _get_source_ip_address(request)
 
     _, _, event = whereabouts_service.set_status(
-        client, user, whereabouts, source_address=source_address
+        g.client, user, whereabouts, source_address=source_address
     )
 
     whereabouts_signals.whereabouts_status_updated.send(None, event=event)
@@ -221,33 +216,3 @@ def set_status():
 def _get_source_ip_address(request: Request) -> IPAddress | None:
     remote_addr = request.remote_addr
     return ip_address(remote_addr) if remote_addr else None
-
-
-def _get_approved_client() -> WhereaboutsClient:
-    client = _get_client()
-
-    if not client.approved:
-        abort(400, 'Invalid client token')
-
-    return client
-
-
-def _get_client() -> WhereaboutsClient:
-    client = _find_client()
-
-    if not client:
-        abort(400, 'Invalid client token')
-
-    return client
-
-
-def _find_client() -> WhereaboutsClient | None:
-    token = request.headers.get('x-whereabouts-client-token')
-    if not token:
-        return None
-
-    client = whereabouts_client_service.find_client_by_token(token)
-    if not client:
-        return None
-
-    return client

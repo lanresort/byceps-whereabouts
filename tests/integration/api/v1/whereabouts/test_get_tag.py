@@ -8,19 +8,20 @@ import pytest
 from byceps.services.authn.identity_tag import authn_identity_tag_service
 from byceps.services.authn.identity_tag.models import UserIdentityTag
 from byceps.services.user.models.user import User
-from byceps.services.whereabouts import whereabouts_sound_service
+from byceps.services.whereabouts import (
+    whereabouts_client_service,
+    whereabouts_sound_service,
+)
 from byceps.services.whereabouts.models import WhereaboutsUserSound
 
 
 CONTENT_TYPE_JSON = 'application/json'
 
 
-def test_with_unknown_identifier(api_client, api_client_authz_header):
+def test_with_unknown_identifier(api_client, client_token_header):
     unknown_identifier = '12345'
 
-    response = send_request(
-        api_client, api_client_authz_header, unknown_identifier
-    )
+    response = send_request(api_client, client_token_header, unknown_identifier)
 
     assert response.status_code == 404
     assert response.content_type == CONTENT_TYPE_JSON
@@ -30,12 +31,12 @@ def test_with_unknown_identifier(api_client, api_client_authz_header):
 
 def test_with_known_identifier(
     api_client,
-    api_client_authz_header,
+    client_token_header,
     identity_tag: UserIdentityTag,
     user_sound: WhereaboutsUserSound,
 ):
     response = send_request(
-        api_client, api_client_authz_header, identity_tag.identifier
+        api_client, client_token_header, identity_tag.identifier
     )
 
     assert response.status_code == 200
@@ -61,6 +62,22 @@ def test_with_known_identifier_unauthorized(
 
 
 @pytest.fixture(scope='module')
+def whereabouts_client(admin_user: User):
+    client, _ = whereabouts_client_service.register_client(
+        button_count=3, audio_output=False
+    )
+    approved_client, _ = whereabouts_client_service.approve_client(
+        client, admin_user
+    )
+    return approved_client
+
+
+@pytest.fixture(scope='module')
+def client_token_header(whereabouts_client):
+    return 'Authorization', f'Bearer {whereabouts_client.token}'
+
+
+@pytest.fixture(scope='module')
 def identity_tag(user: User, admin_user: User) -> UserIdentityTag:
     identifier = '0004283951'
     return authn_identity_tag_service.create_tag(admin_user, identifier, user)
@@ -71,6 +88,6 @@ def user_sound(user: User) -> WhereaboutsUserSound:
     return whereabouts_sound_service.create_user_sound(user, 'moin.ogg')
 
 
-def send_request(api_client, api_client_authz_header, identifier: str):
+def send_request(api_client, client_token_header, identifier: str):
     url = f'/v1/whereabouts/tags/{identifier}'
-    return api_client.get(url, headers=[api_client_authz_header])
+    return api_client.get(url, headers=[client_token_header])

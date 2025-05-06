@@ -21,7 +21,6 @@ URL = '/v1/whereabouts/statuses'
 
 def test_success(
     api_client,
-    api_client_authz_header,
     client_token_header,
     whereabouts_client,
     user: User,
@@ -37,9 +36,7 @@ def test_success(
         'whereabouts_name': str(whereabouts.name),
     }
 
-    response = send_request(
-        api_client, api_client_authz_header, client_token_header, payload
-    )
+    response = send_request(api_client, client_token_header, payload)
 
     assert response.status_code == 204
 
@@ -59,23 +56,16 @@ def test_unauthorized(api_client):
     assert response.json is None
 
 
-def test_empty_payload(
-    api_client,
-    api_client_authz_header,
-    client_token_header,
-):
+def test_empty_payload(api_client, client_token_header):
     payload: dict[str, str] = {}
 
-    response = send_request(
-        api_client, api_client_authz_header, client_token_header, payload
-    )
+    response = send_request(api_client, client_token_header, payload)
 
     assert response.status_code == 400
 
 
 def test_unknown_user_id(
     api_client,
-    api_client_authz_header,
     client_token_header,
     whereabouts_client,
     party: Party,
@@ -89,16 +79,13 @@ def test_unknown_user_id(
         'whereabouts_name': str(whereabouts.name),
     }
 
-    response = send_request(
-        api_client, api_client_authz_header, client_token_header, payload
-    )
+    response = send_request(api_client, client_token_header, payload)
 
     assert response.status_code == 400
 
 
 def test_unknown_party_id(
     api_client,
-    api_client_authz_header,
     client_token_header,
     whereabouts_client,
     user: User,
@@ -110,16 +97,13 @@ def test_unknown_party_id(
         'whereabouts_name': str(whereabouts.name),
     }
 
-    response = send_request(
-        api_client, api_client_authz_header, client_token_header, payload
-    )
+    response = send_request(api_client, client_token_header, payload)
 
     assert response.status_code == 400
 
 
 def test_unknown_whereabouts_name(
     api_client,
-    api_client_authz_header,
     client_token_header,
     whereabouts_client,
     user: User,
@@ -132,9 +116,7 @@ def test_unknown_whereabouts_name(
         'whereabouts_name': 'unknown-whereabouts-name',
     }
 
-    response = send_request(
-        api_client, api_client_authz_header, client_token_header, payload
-    )
+    response = send_request(api_client, client_token_header, payload)
 
     assert response.status_code == 400
 
@@ -144,7 +126,9 @@ def whereabouts_client(admin_user: User):
     client, _ = whereabouts_client_service.register_client(
         button_count=3, audio_output=False
     )
-    approved_client, _ = whereabouts_client_service.approve_client(client, admin_user)
+    approved_client, _ = whereabouts_client_service.approve_client(
+        client, admin_user
+    )
     return approved_client
 
 
@@ -161,14 +145,9 @@ def whereabouts(party) -> Whereabouts:
 
 @pytest.fixture(scope='module')
 def client_token_header(whereabouts_client):
-    return 'x-whereabouts-client-token', whereabouts_client.token
+    return 'Authorization', f'Bearer {whereabouts_client.token}'
 
 
-def send_request(
-    api_client,
-    api_client_authz_header,
-    client_token_header,
-    payload: dict[str, str],
-):
-    headers = [api_client_authz_header, client_token_header]
+def send_request(api_client, client_token_header, payload: dict[str, str]):
+    headers = [client_token_header]
     return api_client.post(URL, headers=headers, json=payload)

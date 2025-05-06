@@ -21,13 +21,13 @@ CONTENT_TYPE_JSON = 'application/json'
 
 def test_get_status(
     api_client,
-    api_client_authz_header,
+    client_token_header,
     user: User,
     party: Party,
     whereabouts: Whereabouts,
     status: WhereaboutsStatus,
 ):
-    response = send_request(api_client, api_client_authz_header, user, party)
+    response = send_request(api_client, client_token_header, user, party)
 
     assert response.status_code == 200
     assert response.content_type == CONTENT_TYPE_JSON
@@ -58,7 +58,9 @@ def whereabouts_client(admin_user: User):
     client, _ = whereabouts_client_service.register_client(
         button_count=3, audio_output=False
     )
-    approved_client, _ = whereabouts_client_service.approve_client(client, admin_user)
+    approved_client, _ = whereabouts_client_service.approve_client(
+        client, admin_user
+    )
     return approved_client
 
 
@@ -74,6 +76,11 @@ def whereabouts(party: Party) -> Whereabouts:
 
 
 @pytest.fixture(scope='module')
+def client_token_header(whereabouts_client):
+    return 'Authorization', f'Bearer {whereabouts_client.token}'
+
+
+@pytest.fixture(scope='module')
 def status(
     whereabouts_client, user: User, whereabouts: Whereabouts
 ) -> WhereaboutsStatus:
@@ -83,9 +90,9 @@ def status(
     return status
 
 
-def send_request(api_client, api_client_authz_header, user: User, party: Party):
+def send_request(api_client, client_token_header, user: User, party: Party):
     url = build_url(user, party)
-    return api_client.get(url, headers=[api_client_authz_header])
+    return api_client.get(url, headers=[client_token_header])
 
 
 def build_url(user: User, party: Party) -> str:
