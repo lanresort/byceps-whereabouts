@@ -87,12 +87,14 @@ class DbWhereaboutsClient(db.Model):
         button_count: int,
         audio_output: bool,
         authority_status: WhereaboutsClientAuthorityStatus,
+        token: str,
     ) -> None:
         self.id = client_id
         self.registered_at = registered_at
         self.button_count = button_count
         self.audio_output = audio_output
         self.authority_status = authority_status
+        self.token = token
 
     @hybrid_property
     def authority_status(self) -> WhereaboutsClientAuthorityStatus:

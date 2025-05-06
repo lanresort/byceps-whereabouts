@@ -32,10 +32,7 @@ def test_client_registration_status_approved(
     )
 
     assert response.status_code == 200
-    assert response.json == {
-        'status': 'approved',
-        'token': approved_whereabouts_client.token,
-    }
+    assert response.json == {'status': 'approved'}
 
 
 def test_client_registration_status_deleted(

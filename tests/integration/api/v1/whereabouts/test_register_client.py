@@ -3,7 +3,11 @@
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
+from byceps.services.whereabouts import whereabouts_client_service
+
+
 URL = '/v1/whereabouts/client/register'
+LOCATION_PREFIX = '/v1/whereabouts/client/registration_status/'
 
 
 def test_success(api_client, api_client_authz_header):
@@ -14,10 +18,12 @@ def test_success(api_client, api_client_authz_header):
 
     response = send_request(api_client, api_client_authz_header, payload)
 
-    assert response.status_code == 204
-    assert response.location.startswith(
-        '/v1/whereabouts/client/registration_status/'
-    )
+    assert response.status_code == 201
+    assert response.location.startswith(LOCATION_PREFIX)
+
+    client_id = response.location.removeprefix(LOCATION_PREFIX)
+    client = whereabouts_client_service.find_client(client_id)
+    assert response.json == {'token': client.token}
 
 
 def test_unauthorized(api_client):

@@ -55,12 +55,14 @@ def register_client(
     """Register a client."""
     client_id = WhereaboutsClientID(generate_uuid7())
     registered_at = datetime.utcnow()
+    token = secrets.token_urlsafe(24)
 
     candidate = WhereaboutsClientCandidate(
         id=client_id,
         registered_at=registered_at,
         button_count=button_count,
         audio_output=audio_output,
+        token=token,
     )
 
     event = WhereaboutsClientRegisteredEvent(
@@ -77,7 +79,6 @@ def approve_client(
 ) -> tuple[WhereaboutsClient, WhereaboutsClientApprovedEvent]:
     """Approve a client."""
     approved_at = datetime.utcnow()
-    token = secrets.token_urlsafe(24)
 
     client = WhereaboutsClient(
         id=candidate.id,
@@ -85,7 +86,7 @@ def approve_client(
         button_count=candidate.button_count,
         audio_output=candidate.audio_output,
         authority_status=WhereaboutsClientAuthorityStatus.approved,
-        token=token,
+        token=candidate.token,
         location=None,
         description=None,
         config_id=None,

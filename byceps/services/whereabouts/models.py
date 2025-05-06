@@ -50,6 +50,7 @@ class WhereaboutsClientCandidate:
     registered_at: datetime
     button_count: int
     audio_output: bool
+    token: str
 
 
 @dataclass(frozen=True)

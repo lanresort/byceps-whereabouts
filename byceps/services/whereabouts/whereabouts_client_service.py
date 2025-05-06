@@ -128,6 +128,7 @@ def _persist_client_registration(candidate: WhereaboutsClientCandidate) -> None:
         candidate.button_count,
         candidate.audio_output,
         WhereaboutsClientAuthorityStatus.pending,
+        candidate.token,
     )
 
     db.session.add(db_client)

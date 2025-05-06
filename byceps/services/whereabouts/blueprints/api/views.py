@@ -26,7 +26,6 @@ from byceps.util.views import (
     api_token_required,
     create_empty_json_response,
     respond_no_content,
-    respond_no_content_with_location,
 )
 
 from .models import RegisterClientRequestModel, SetStatusRequestModel
@@ -37,7 +36,6 @@ blueprint = create_blueprint('whereabouts_api', __name__)
 
 @blueprint.post('/client/register')
 @api_token_required
-@respond_no_content_with_location
 def register_client():
     """Register a client."""
     if not request.is_json:
@@ -56,7 +54,12 @@ def register_client():
 
     whereabouts_signals.whereabouts_client_registered.send(None, event=event)
 
-    return url_for('.get_client_registration_status', client_id=candidate.id)
+    url = url_for('.get_client_registration_status', client_id=candidate.id)
+
+    response = jsonify({'token': candidate.token})
+    response.status_code = 201
+    response.headers['Location'] = url
+    return response
 
 
 @blueprint.get('/client/registration_status/<client_id>')
@@ -70,7 +73,7 @@ def get_client_registration_status(client_id):
     if client.pending:
         response_data = {'status': 'pending'}
     elif client.approved:
-        response_data = {'status': 'approved', 'token': client.token}
+        response_data = {'status': 'approved'}
     else:
         response_data = {'status': 'rejected'}
 
