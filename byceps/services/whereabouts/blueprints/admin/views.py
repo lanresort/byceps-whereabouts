@@ -43,7 +43,7 @@ STALE_THRESHOLD = timedelta(hours=12)
 @permission_required('whereabouts.view')
 @templated
 def index(party_id):
-    """Show whereabouts for party."""
+    """Show orga whereabouts for party."""
     party = _get_party_or_404(party_id)
 
     whereabouts_list = whereabouts_service.get_whereabouts_list(party)
@@ -71,6 +71,21 @@ def index(party_id):
 
 # -------------------------------------------------------------------- #
 # whereabouts
+
+
+@blueprint.get('/for_party/<party_id>/whereabouts')
+@permission_required('whereabouts.view')
+@templated
+def whereabouts_index(party_id):
+    """List whereabouts for party."""
+    party = _get_party_or_404(party_id)
+
+    whereabouts_list = whereabouts_service.get_whereabouts_list(party)
+
+    return {
+        'party': party,
+        'whereabouts_list': whereabouts_list,
+    }
 
 
 @blueprint.get('/for_party/<party_id>/whereabouts/create')

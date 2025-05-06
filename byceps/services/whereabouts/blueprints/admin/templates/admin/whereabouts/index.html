@@ -33,7 +33,7 @@
   {%- if has_current_user_permission('whereabouts.administrate') %}
   <div>
     <div class="button-row is-right-aligned">
-      <a class="button" href="{{ url_for('.whereabouts_create_form', party_id=party.id) }}">{{ render_icon('add') }} <span>{{ _('Add') }}</span></a>
+      <a class="button" href="{{ url_for('.whereabouts_index', party_id=party.id) }}">{{ render_icon('administrate') }} <span>{{ _('Manage') }}</span></a>
     </div>
   </div>
   {%- endif %}
