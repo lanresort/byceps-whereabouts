@@ -55,7 +55,7 @@ def register_client(
     """Register a client."""
     client_id = WhereaboutsClientID(generate_uuid7())
     registered_at = datetime.utcnow()
-    token = secrets.token_urlsafe(24)
+    token = 'VerbleiberClientToken_' + secrets.token_urlsafe(24)
 
     candidate = WhereaboutsClientCandidate(
         id=client_id,
