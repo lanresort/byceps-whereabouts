@@ -43,7 +43,7 @@
   <div class="block grid whereabouts" style="--column-min-width: 24rem;">
   {%- for whereabouts in whereabouts_list|sort(attribute='position') %}
     {%- with statuses = recent_statuses_by_whereabouts[whereabouts.id] %}
-      {%- if statuses or not whereabouts.hide_if_empty %}
+      {%- if statuses or not whereabouts.hidden_if_empty %}
     <div>
       <h2 class="title">{{ whereabouts.description }} {{ render_extra_in_heading(statuses|length) }}</h2>
 

@@ -43,7 +43,7 @@ def create_whereabouts(
     description: str,
     *,
     position: int | None = None,
-    hide_if_empty: bool = False,
+    hidden_if_empty: bool = False,
     secret: bool = False,
 ) -> Whereabouts:
     """Create whereabouts."""
@@ -59,7 +59,7 @@ def create_whereabouts(
         name,
         description,
         next_position,
-        hide_if_empty=hide_if_empty,
+        hidden_if_empty=hidden_if_empty,
         secret=secret,
     )
 
@@ -75,7 +75,7 @@ def _persist_whereabouts(whereabouts: Whereabouts) -> None:
         whereabouts.name,
         whereabouts.description,
         whereabouts.position,
-        whereabouts.hide_if_empty,
+        whereabouts.hidden_if_empty,
         whereabouts.secret,
     )
 
@@ -132,7 +132,7 @@ def _db_entity_to_whereabouts(
         name=db_whereabouts.name,
         description=db_whereabouts.description,
         position=db_whereabouts.position,
-        hide_if_empty=db_whereabouts.hide_if_empty,
+        hidden_if_empty=db_whereabouts.hidden_if_empty,
         secret=db_whereabouts.secret,
     )
 

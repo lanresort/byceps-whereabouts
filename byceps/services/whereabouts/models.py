@@ -89,7 +89,7 @@ class Whereabouts:
     name: str
     description: str
     position: int
-    hide_if_empty: bool
+    hidden_if_empty: bool
     secret: bool
 
 

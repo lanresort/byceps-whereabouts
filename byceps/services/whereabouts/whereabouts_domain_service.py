@@ -31,7 +31,7 @@ def create_whereabouts(
     description: str,
     position: int,
     *,
-    hide_if_empty: bool = False,
+    hidden_if_empty: bool = False,
     secret: bool = False,
 ) -> Whereabouts:
     """Create whereabouts."""
@@ -43,7 +43,7 @@ def create_whereabouts(
         name=name,
         description=description,
         position=position,
-        hide_if_empty=hide_if_empty,
+        hidden_if_empty=hidden_if_empty,
         secret=secret,
     )
 

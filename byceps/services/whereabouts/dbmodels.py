@@ -136,7 +136,7 @@ class DbWhereabouts(db.Model):
     name: Mapped[str] = mapped_column(db.UnicodeText, index=True)
     description: Mapped[str] = mapped_column(db.UnicodeText)
     position: Mapped[int]
-    hide_if_empty: Mapped[bool]
+    hidden_if_empty: Mapped[bool]
     secret: Mapped[bool]
 
     def __init__(
@@ -146,7 +146,7 @@ class DbWhereabouts(db.Model):
         name: str,
         description: str,
         position: int,
-        hide_if_empty: bool,
+        hidden_if_empty: bool,
         secret: bool,
     ) -> None:
         self.id = whereabouts_id
@@ -154,7 +154,7 @@ class DbWhereabouts(db.Model):
         self.name = name
         self.description = description
         self.position = position
-        self.hide_if_empty = hide_if_empty
+        self.hidden_if_empty = hidden_if_empty
         self.secret = secret
 
 

@@ -23,7 +23,7 @@ class ClientUpdateForm(LocalizedForm):
 class WhereaboutsCreateForm(LocalizedForm):
     name = StringField(lazy_gettext('Name'), [InputRequired()])
     description = StringField(lazy_gettext('Description'), [InputRequired()])
-    hide_if_empty = BooleanField(lazy_gettext('Hide if empty'))
+    hidden_if_empty = BooleanField(lazy_gettext('Hidden if empty'))
     secret = BooleanField(lazy_gettext('Secret'))
 
 
