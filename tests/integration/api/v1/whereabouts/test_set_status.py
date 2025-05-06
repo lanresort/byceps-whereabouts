@@ -140,19 +140,12 @@ def test_unknown_whereabouts_name(
 
 
 @pytest.fixture(scope='module')
-def whereabouts_client(admin):
+def whereabouts_client(admin_user: User):
     client, _ = whereabouts_client_service.register_client(
         button_count=3, audio_output=False
     )
-    approved_client, _ = whereabouts_client_service.approve_client(
-        client, admin
-    )
+    approved_client, _ = whereabouts_client_service.approve_client(client, admin_user)
     return approved_client
-
-
-@pytest.fixture(scope='module')
-def admin(make_user) -> User:
-    return make_user()
 
 
 @pytest.fixture(scope='module')

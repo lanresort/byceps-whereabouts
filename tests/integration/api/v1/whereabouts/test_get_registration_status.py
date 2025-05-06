@@ -59,7 +59,7 @@ def test_unauthorized(api_client, registered_whereabouts_client):
 
 
 @pytest.fixture(scope='module')
-def registered_whereabouts_client(admin):
+def registered_whereabouts_client(admin_user: User):
     candidate, _ = whereabouts_client_service.register_client(
         button_count=3, audio_output=False
     )
@@ -68,38 +68,33 @@ def registered_whereabouts_client(admin):
 
 
 @pytest.fixture(scope='module')
-def approved_whereabouts_client(admin):
+def approved_whereabouts_client(admin_user: User):
     candidate, _ = whereabouts_client_service.register_client(
         button_count=3, audio_output=False
     )
 
     approved_client, _ = whereabouts_client_service.approve_client(
-        candidate, admin
+        candidate, admin_user
     )
 
     return approved_client
 
 
 @pytest.fixture(scope='module')
-def deleted_whereabouts_client(admin):
+def deleted_whereabouts_client(admin_user: User):
     candidate, _ = whereabouts_client_service.register_client(
         button_count=3, audio_output=False
     )
 
     approved_client, _ = whereabouts_client_service.approve_client(
-        candidate, admin
+        candidate, admin_user
     )
 
     deleted_client, _ = whereabouts_client_service.delete_client(
-        approved_client, admin
+        approved_client, admin_user
     )
 
     return deleted_client
-
-
-@pytest.fixture(scope='module')
-def admin(make_user) -> User:
-    return make_user()
 
 
 def send_request(api_client, api_client_authz_header, whereabouts_client):
