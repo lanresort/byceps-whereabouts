@@ -39,10 +39,6 @@ blueprint = create_blueprint('whereabouts_admin', __name__)
 STALE_THRESHOLD = timedelta(hours=12)
 
 
-# -------------------------------------------------------------------- #
-# whereabouts
-
-
 @blueprint.get('/for_party/<party_id>')
 @permission_required('whereabouts.view')
 @templated
@@ -73,10 +69,14 @@ def index(party_id):
     }
 
 
+# -------------------------------------------------------------------- #
+# whereabouts
+
+
 @blueprint.get('/for_party/<party_id>/whereabouts/create')
 @permission_required('whereabouts.administrate')
 @templated
-def create_form(party_id, erroneous_form=None):
+def whereabouts_create_form(party_id, erroneous_form=None):
     """Show form to add whereabouts."""
     party = _get_party_or_404(party_id)
 
@@ -90,13 +90,13 @@ def create_form(party_id, erroneous_form=None):
 
 @blueprint.post('/for_party/<party_id>/whereabouts')
 @permission_required('whereabouts.administrate')
-def create(party_id):
+def whereabouts_create(party_id):
     """Add whereabouts."""
     party = _get_party_or_404(party_id)
 
     form = WhereaboutsCreateForm(request.form)
     if not form.validate():
-        return create_form(form)
+        return whereabouts_create_form(form)
 
     name = form.name.data.strip()
     description = form.description.data.strip()
