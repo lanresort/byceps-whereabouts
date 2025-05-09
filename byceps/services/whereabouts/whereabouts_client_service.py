@@ -15,6 +15,7 @@ from sqlalchemy import select
 import structlog
 
 from byceps.database import db
+from byceps.services.global_setting import global_setting_service
 from byceps.services.user.models.user import User
 
 from . import whereabouts_client_domain_service
@@ -95,6 +96,27 @@ def _db_entity_to_client_config(
 
 # -------------------------------------------------------------------- #
 # client
+
+
+GLOBAL_SETTINGS_KEY = 'whereabouts_client_registration_status'
+
+
+def open_registration() -> None:
+    """Open client registration."""
+    global_setting_service.create_or_update_setting(GLOBAL_SETTINGS_KEY, 'open')
+
+
+def close_registration() -> None:
+    """Close client registration."""
+    global_setting_service.create_or_update_setting(
+        GLOBAL_SETTINGS_KEY, 'closed'
+    )
+
+
+def is_registration_open() -> bool:
+    """Return `True` if client registration is open/allowed."""
+    value = global_setting_service.find_setting_value(GLOBAL_SETTINGS_KEY)
+    return value == 'open'
 
 
 def register_client(

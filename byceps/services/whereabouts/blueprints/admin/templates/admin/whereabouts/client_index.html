@@ -16,6 +16,14 @@
   {%- endif -%}
 {%- endmacro %}
 
+{% macro render_registration_status(open) -%}
+  {%- if open %}
+  {{ render_tag(_('open'), icon='enabled', class='color-success') }}
+  {%- else %}
+  {{ render_tag(_('closed'), icon='disabled', class='color-disabled') }}
+  {%- endif %}
+{%- endmacro %}
+
 {% macro render_client_id(client) -%}
   <abbr title="{{ client.id }}">{{ client.id.hex[-12:] }}</abbr>
 {%- endmacro %}
@@ -26,6 +34,21 @@
 {%- endmacro %}
 
 {% block body %}
+
+<table class="itemlist is-vcentered" style="margin-left: auto;">
+  <tr>
+    <td>{{ _('Client registration') }}</td>
+    <td>
+      <div class="dropdown">
+        <button class="dropdown-toggle button is-clear">{{ render_registration_status(registration_open) }} {{ render_icon('caret-down') }}</button>
+        <ol class="dropdown-menu">
+          <li><a class="dropdown-item" href="{{ url_for('.open_client_registration') }}" data-action="update-client-registration-status">{{ render_registration_status(true) }}</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('.close_client_registration') }}" data-action="update-client-registration-status">{{ render_registration_status(false) }}</a></li>
+        </ol>
+      </div>
+    </td>
+  </tr>
+</table>
 
 {%- if pending_clients %}
 <h2 class="title">{{ render_authority_status_icon('pending') }} {{ _('Pending Clients') }} {{ render_extra_in_heading(pending_clients|length) }}</h2>
@@ -143,6 +166,7 @@
 {% block scripts %}
 <script>
   onDomReady(() => {
+    post_on_click_then_reload('[data-action="update-client-registration-status"]');
     confirmed_post_on_click_then_reload('[data-action="approve-client"]', '{{ _('Approve client?') }}');
     confirmed_delete_on_click_then_reload('[data-action="delete-client-candidate"]', '{{ _('Delete client candidate?') }}');
     confirmed_delete_on_click_then_reload('[data-action="delete-client"]', '{{ _('Delete client?') }}');

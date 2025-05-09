@@ -47,6 +47,9 @@ def register_client():
     except ValidationError as e:
         abort(400, e.json())
 
+    if not whereabouts_client_service.is_registration_open():
+        abort(403, 'Client registration is closed.')
+
     source_address = _get_source_ip_address(request)
 
     candidate, event = whereabouts_client_service.register_client(

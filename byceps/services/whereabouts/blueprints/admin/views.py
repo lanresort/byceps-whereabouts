@@ -136,6 +136,8 @@ def whereabouts_create(party_id):
 @templated
 def client_index():
     """List clients."""
+    registration_open = whereabouts_client_service.is_registration_open()
+
     clients = whereabouts_client_service.get_all_clients()
 
     pending_clients, handled_clients = partition(clients, lambda c: c.pending)
@@ -144,10 +146,27 @@ def client_index():
     )
 
     return {
+        'registration_open': registration_open,
         'pending_clients': pending_clients,
         'approved_clients': approved_clients,
         'deleted_clients': deleted_clients,
     }
+
+
+@blueprint.post('/client_registration/open')
+@permission_required('whereabouts.administrate')
+@respond_no_content
+def open_client_registration():
+    """Open client registration."""
+    whereabouts_client_service.open_registration()
+
+
+@blueprint.post('/client_registration/close')
+@permission_required('whereabouts.administrate')
+@respond_no_content
+def close_client_registration():
+    """Close client registration."""
+    whereabouts_client_service.close_registration()
 
 
 @blueprint.post('/clients/<uuid:client_id>/approve')
