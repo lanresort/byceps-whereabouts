@@ -9,10 +9,18 @@ from byceps.services.user.models.user import User
 from byceps.services.whereabouts import whereabouts_client_service
 
 
+def test_client_registration_unknown_client(api_client):
+    unknown_whereabouts_client_id = '01916a58-7b19-77d4-9424-0fff26a7ecc1'
+
+    response = send_request(api_client, unknown_whereabouts_client_id)
+
+    assert response.status_code == 404
+
+
 def test_client_registration_status_pending(
     api_client, registered_whereabouts_client
 ):
-    response = send_request(api_client, registered_whereabouts_client)
+    response = send_request(api_client, registered_whereabouts_client.id)
 
     assert response.status_code == 200
     assert response.json == {'status': 'pending'}
@@ -22,7 +30,7 @@ def test_client_registration_status_approved(
     api_client,
     approved_whereabouts_client,
 ):
-    response = send_request(api_client, approved_whereabouts_client)
+    response = send_request(api_client, approved_whereabouts_client.id)
 
     assert response.status_code == 200
     assert response.json == {'status': 'approved'}
@@ -32,7 +40,7 @@ def test_client_registration_status_deleted(
     api_client,
     deleted_whereabouts_client,
 ):
-    response = send_request(api_client, deleted_whereabouts_client)
+    response = send_request(api_client, deleted_whereabouts_client.id)
 
     assert response.status_code == 200
     assert response.json == {'status': 'rejected'}
@@ -77,7 +85,6 @@ def deleted_whereabouts_client(admin_user: User):
     return deleted_client
 
 
-def send_request(api_client, whereabouts_client):
-    client_id = whereabouts_client.id
-    url = f'/v1/whereabouts/client/registration_status/{client_id}'
+def send_request(api_client, whereabouts_client_id):
+    url = f'/v1/whereabouts/client/registration_status/{whereabouts_client_id}'
     return api_client.get(url)
