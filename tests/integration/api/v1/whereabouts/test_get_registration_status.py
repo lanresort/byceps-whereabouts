@@ -10,13 +10,9 @@ from byceps.services.whereabouts import whereabouts_client_service
 
 
 def test_client_registration_status_pending(
-    api_client,
-    api_client_authz_header,
-    registered_whereabouts_client,
+    api_client, registered_whereabouts_client
 ):
-    response = send_request(
-        api_client, api_client_authz_header, registered_whereabouts_client
-    )
+    response = send_request(api_client, registered_whereabouts_client)
 
     assert response.status_code == 200
     assert response.json == {'status': 'pending'}
@@ -24,12 +20,9 @@ def test_client_registration_status_pending(
 
 def test_client_registration_status_approved(
     api_client,
-    api_client_authz_header,
     approved_whereabouts_client,
 ):
-    response = send_request(
-        api_client, api_client_authz_header, approved_whereabouts_client
-    )
+    response = send_request(api_client, approved_whereabouts_client)
 
     assert response.status_code == 200
     assert response.json == {'status': 'approved'}
@@ -37,25 +30,12 @@ def test_client_registration_status_approved(
 
 def test_client_registration_status_deleted(
     api_client,
-    api_client_authz_header,
     deleted_whereabouts_client,
 ):
-    response = send_request(
-        api_client, api_client_authz_header, deleted_whereabouts_client
-    )
+    response = send_request(api_client, deleted_whereabouts_client)
 
     assert response.status_code == 200
     assert response.json == {'status': 'rejected'}
-
-
-def test_unauthorized(api_client, registered_whereabouts_client):
-    client_id = registered_whereabouts_client.id
-    url = f'/v1/whereabouts/client/registration_status/{client_id}'
-
-    response = api_client.get(url)
-
-    assert response.status_code == 401
-    assert response.json is None
 
 
 @pytest.fixture(scope='module')
@@ -97,10 +77,7 @@ def deleted_whereabouts_client(admin_user: User):
     return deleted_client
 
 
-def send_request(api_client, api_client_authz_header, whereabouts_client):
+def send_request(api_client, whereabouts_client):
     client_id = whereabouts_client.id
     url = f'/v1/whereabouts/client/registration_status/{client_id}'
-
-    headers = [api_client_authz_header]
-
-    return api_client.get(url, headers=headers)
+    return api_client.get(url)

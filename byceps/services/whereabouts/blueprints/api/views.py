@@ -22,11 +22,7 @@ from byceps.services.whereabouts import (
 )
 from byceps.services.whereabouts.models import IPAddress
 from byceps.util.framework.blueprint import create_blueprint
-from byceps.util.views import (
-    api_token_required,
-    create_empty_json_response,
-    respond_no_content,
-)
+from byceps.util.views import create_empty_json_response, respond_no_content
 
 from .decorators import client_token_required
 from .models import RegisterClientRequestModel, SetStatusRequestModel
@@ -36,7 +32,6 @@ blueprint = create_blueprint('whereabouts_api', __name__)
 
 
 @blueprint.post('/client/register')
-@api_token_required
 def register_client():
     """Register a client."""
     if not request.is_json:
@@ -67,7 +62,6 @@ def register_client():
 
 
 @blueprint.get('/client/registration_status/<client_id>')
-@api_token_required
 def get_client_registration_status(client_id):
     """Get a client's registration status."""
     client = whereabouts_client_service.find_client(client_id)
