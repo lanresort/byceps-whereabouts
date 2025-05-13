@@ -101,6 +101,15 @@ def approve_client(
     return client, event
 
 
+def update_client(
+    client: WhereaboutsClient, location: str | None, description: str | None
+) -> WhereaboutsClient:
+    """Update a client."""
+    return dataclasses.replace(
+        client, location=location, description=description
+    )
+
+
 def delete_client(
     client: WhereaboutsClient, initiator: User
 ) -> tuple[WhereaboutsClient, WhereaboutsClientDeletedEvent]:

@@ -16,7 +16,7 @@ from byceps.services.party.models import Party, PartyID
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
 
-from . import whereabouts_client_service, whereabouts_domain_service
+from . import whereabouts_client_repository, whereabouts_domain_service
 from .dbmodels import (
     DbWhereabouts,
     DbWhereaboutsStatus,
@@ -155,7 +155,7 @@ def set_status(
 
     _persist_update(status, update)
 
-    whereabouts_client_service.update_liveliness_status(
+    whereabouts_client_repository.update_liveliness_status(
         client.id, True, event.occurred_at
     )
 
