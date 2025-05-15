@@ -14,6 +14,11 @@ from byceps.services.global_setting import global_setting_service
 from byceps.services.user.models.user import User
 
 from . import whereabouts_client_domain_service, whereabouts_client_repository
+from .dbmodels import (
+    DbWhereaboutsClient,
+    DbWhereaboutsClientConfig,
+    DbWhereaboutsClientLivelinessStatus,
+)
 from .events import (
     WhereaboutsClientApprovedEvent,
     WhereaboutsClientRegisteredEvent,
@@ -55,7 +60,20 @@ def create_client_config(
 
 def get_all_client_configs() -> list[WhereaboutsClientConfig]:
     """Return all client configurations."""
-    return whereabouts_client_repository.get_all_client_configs()
+    db_configs = whereabouts_client_repository.get_all_client_configs()
+
+    return [_db_entity_to_client_config(db_config) for db_config in db_configs]
+
+
+def _db_entity_to_client_config(
+    db_config: DbWhereaboutsClientConfig,
+) -> WhereaboutsClientConfig:
+    return WhereaboutsClientConfig(
+        id=db_config.id,
+        title=db_config.title,
+        description=db_config.description,
+        content=db_config.content,
+    )
 
 
 # -------------------------------------------------------------------- #
@@ -215,14 +233,70 @@ def sign_off_client(
 
 def find_client(client_id: WhereaboutsClientID) -> WhereaboutsClient | None:
     """Return client, if found."""
-    return whereabouts_client_repository.find_client(client_id)
+    db_client = whereabouts_client_repository.find_db_client(client_id)
+
+    if db_client is None:
+        return None
+
+    return _db_entity_to_client(db_client)
 
 
 def find_client_by_token(token: str) -> WhereaboutsClient | None:
     """Return client with that token, if found."""
-    return whereabouts_client_repository.find_client_by_token(token)
+    db_client = whereabouts_client_repository.find_db_client_by_token(token)
+
+    if db_client is None:
+        return None
+
+    return _db_entity_to_client(db_client)
 
 
 def get_all_clients() -> list[WhereaboutsClientWithLivelinessStatus]:
     """Return all clients."""
-    return whereabouts_client_repository.get_all_clients()
+    db_clients_with_liveliness_status = (
+        whereabouts_client_repository.get_db_all_clients()
+    )
+
+    return [
+        _db_entity_to_client_with_liveliness_status(
+            db_client, db_liveliness_status
+        )
+        for db_client, db_liveliness_status in db_clients_with_liveliness_status
+    ]
+
+
+def _db_entity_to_client_with_liveliness_status(
+    db_client: DbWhereaboutsClient,
+    db_liveliness_status: DbWhereaboutsClientLivelinessStatus,
+) -> WhereaboutsClientWithLivelinessStatus:
+    client = _db_entity_to_client(db_client)
+
+    signed_on = (
+        db_liveliness_status.signed_on if db_liveliness_status else False
+    )
+
+    latest_activity_at = (
+        db_liveliness_status.latest_activity_at
+        if db_liveliness_status
+        else client.registered_at
+    )
+
+    return WhereaboutsClientWithLivelinessStatus(
+        **dataclasses.asdict(client),
+        signed_on=signed_on,
+        latest_activity_at=latest_activity_at,
+    )
+
+
+def _db_entity_to_client(db_client: DbWhereaboutsClient) -> WhereaboutsClient:
+    return WhereaboutsClient(
+        id=db_client.id,
+        registered_at=db_client.registered_at,
+        button_count=db_client.button_count,
+        audio_output=db_client.audio_output,
+        authority_status=db_client.authority_status,
+        token=db_client.token,
+        location=db_client.location,
+        description=db_client.description,
+        config_id=db_client.config_id,
+    )
