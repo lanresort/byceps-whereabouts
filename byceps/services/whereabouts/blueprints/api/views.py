@@ -190,7 +190,7 @@ def set_status():
         abort(400, 'Unknown party ID')
 
     whereabouts = whereabouts_service.find_whereabouts_by_name(
-        party.id, req.whereabouts_name
+        party, req.whereabouts_name
     )
     if whereabouts is None:
         abort(400, 'Unknown whereabouts name for this party')

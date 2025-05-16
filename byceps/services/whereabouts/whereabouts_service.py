@@ -7,7 +7,7 @@ byceps.services.whereabouts.whereabouts_service
 """
 
 from byceps.services.party import party_service
-from byceps.services.party.models import Party, PartyID
+from byceps.services.party.models import Party
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
 
@@ -79,18 +79,14 @@ def find_whereabouts(whereabouts_id: WhereaboutsID) -> Whereabouts | None:
     return _db_entity_to_whereabouts(db_whereabouts, party)
 
 
-def find_whereabouts_by_name(
-    party_id: PartyID, name: str
-) -> Whereabouts | None:
+def find_whereabouts_by_name(party: Party, name: str) -> Whereabouts | None:
     """Return whereabouts wi, if found."""
     db_whereabouts = whereabouts_repository.find_db_whereabouts_by_name(
-        party_id, name
+        party.id, name
     )
 
     if db_whereabouts is None:
         return None
-
-    party = party_service.get_party(db_whereabouts.party_id)
 
     return _db_entity_to_whereabouts(db_whereabouts, party)
 
