@@ -6,33 +6,26 @@ byceps.services.whereabouts.whereabouts_sound_service
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
-from __future__ import annotations
-
-from sqlalchemy import select
-
-from byceps.database import db
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User, UserID
 
+from . import whereabouts_sound_repository
 from .dbmodels import DbWhereaboutsUserSound
 from .models import WhereaboutsUserSound
 
 
 def create_user_sound(user: User, filename: str) -> WhereaboutsUserSound:
     """Set a users-specific sound."""
-    db_user_sound = DbWhereaboutsUserSound(user.id, filename)
-
-    db.session.add(db_user_sound)
-    db.session.commit()
+    db_user_sound = whereabouts_sound_repository.create_user_sound(
+        user.id, filename
+    )
 
     return _db_entity_to_user_sound(db_user_sound, user)
 
 
 def find_sound_for_user(user_id: UserID) -> WhereaboutsUserSound | None:
     """Find a sound specific for this user."""
-    db_user_sound = db.session.scalars(
-        select(DbWhereaboutsUserSound).filter_by(user_id=user_id)
-    ).one_or_none()
+    db_user_sound = whereabouts_sound_repository.find_sound_for_user(user_id)
 
     if db_user_sound is None:
         return None
@@ -44,7 +37,7 @@ def find_sound_for_user(user_id: UserID) -> WhereaboutsUserSound | None:
 
 def get_all_user_sounds() -> list[WhereaboutsUserSound]:
     """Return all user sounds."""
-    db_user_sounds = db.session.scalars(select(DbWhereaboutsUserSound)).all()
+    db_user_sounds = whereabouts_sound_repository.get_all_user_sounds()
 
     user_ids = {db_user_sound.user_id for db_user_sound in db_user_sounds}
     users_by_id = user_service.get_users_indexed_by_id(
