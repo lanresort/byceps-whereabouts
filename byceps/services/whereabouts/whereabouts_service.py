@@ -6,17 +6,16 @@ byceps.services.whereabouts.whereabouts_service
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
-from __future__ import annotations
-
-from sqlalchemy import select
-
-from byceps.database import db, execute_upsert
 from byceps.services.party import party_service
 from byceps.services.party.models import Party, PartyID
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User
 
-from . import whereabouts_client_repository, whereabouts_domain_service
+from . import (
+    whereabouts_client_repository,
+    whereabouts_domain_service,
+    whereabouts_repository,
+)
 from .dbmodels import (
     DbWhereabouts,
     DbWhereaboutsStatus,
@@ -63,29 +62,14 @@ def create_whereabouts(
         secret=secret,
     )
 
-    _persist_whereabouts(whereabouts)
+    whereabouts_repository.persist_whereabouts(whereabouts)
 
     return whereabouts
 
 
-def _persist_whereabouts(whereabouts: Whereabouts) -> None:
-    db_whereabouts = DbWhereabouts(
-        whereabouts.id,
-        whereabouts.party.id,
-        whereabouts.name,
-        whereabouts.description,
-        whereabouts.position,
-        whereabouts.hidden_if_empty,
-        whereabouts.secret,
-    )
-
-    db.session.add(db_whereabouts)
-    db.session.commit()
-
-
 def find_whereabouts(whereabouts_id: WhereaboutsID) -> Whereabouts | None:
     """Return whereabouts, if found."""
-    db_whereabouts = db.session.get(DbWhereabouts, whereabouts_id)
+    db_whereabouts = whereabouts_repository.find_db_whereabouts(whereabouts_id)
 
     if db_whereabouts is None:
         return None
@@ -99,9 +83,9 @@ def find_whereabouts_by_name(
     party_id: PartyID, name: str
 ) -> Whereabouts | None:
     """Return whereabouts wi, if found."""
-    db_whereabouts = db.session.scalars(
-        select(DbWhereabouts).filter_by(party_id=party_id).filter_by(name=name)
-    ).one_or_none()
+    db_whereabouts = whereabouts_repository.find_db_whereabouts_by_name(
+        party_id, name
+    )
 
     if db_whereabouts is None:
         return None
@@ -113,9 +97,9 @@ def find_whereabouts_by_name(
 
 def get_whereabouts_list(party: Party) -> list[Whereabouts]:
     """Return possible whereabouts."""
-    db_whereabouts_list = db.session.scalars(
-        select(DbWhereabouts).filter_by(party_id=party.id)
-    ).all()
+    db_whereabouts_list = whereabouts_repository.get_db_whereabouts_list(
+        party.id
+    )
 
     return [
         _db_entity_to_whereabouts(db_whereabouts, party)
@@ -153,7 +137,7 @@ def set_status(
         user, whereabouts, source_address=source_address
     )
 
-    _persist_update(status, update)
+    whereabouts_repository.persist_update(status, update)
 
     whereabouts_client_repository.update_liveliness_status(
         client.id, True, event.occurred_at
@@ -162,41 +146,9 @@ def set_status(
     return status, update, event
 
 
-def _persist_update(
-    status: WhereaboutsStatus, update: WhereaboutsUpdate
-) -> None:
-    # status
-    table = DbWhereaboutsStatus.__table__
-    identifier = {
-        'user_id': status.user.id,
-    }
-    replacement = {
-        'whereabouts_id': status.whereabouts_id,
-        'set_at': status.set_at,
-    }
-    execute_upsert(table, identifier, replacement)
-
-    # update
-    db_update = DbWhereaboutsUpdate(
-        update.id,
-        update.user.id,
-        update.whereabouts_id,
-        update.created_at,
-        update.source_address,
-    )
-    db.session.add(db_update)
-
-    db.session.commit()
-
-
 def find_status(user: User, party: Party) -> WhereaboutsStatus | None:
     """Return user's status for the party, if known."""
-    db_status = db.session.scalars(
-        select(DbWhereaboutsStatus)
-        .join(DbWhereabouts)
-        .filter(DbWhereaboutsStatus.user_id == user.id)
-        .filter(DbWhereabouts.party_id == party.id)
-    ).one_or_none()
+    db_status = whereabouts_repository.find_db_status(user.id, party.id)
 
     if db_status is None:
         return None
@@ -208,11 +160,7 @@ def find_status(user: User, party: Party) -> WhereaboutsStatus | None:
 
 def get_statuses(party: Party) -> list[WhereaboutsStatus]:
     """Return user statuses."""
-    db_statuses = db.session.scalars(
-        select(DbWhereaboutsStatus)
-        .join(DbWhereabouts)
-        .filter(DbWhereabouts.party_id == party.id)
-    ).all()
+    db_statuses = whereabouts_repository.get_db_statuses(party.id)
 
     user_ids = {db_status.user_id for db_status in db_statuses}
     users_by_id = user_service.get_users_indexed_by_id(
