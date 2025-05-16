@@ -29,28 +29,6 @@ from .models import (
 
 
 # -------------------------------------------------------------------- #
-# client config
-
-
-def persist_client_config(config: WhereaboutsClientConfig) -> None:
-    """Persist client configurations."""
-    db_config = DbWhereaboutsClientConfig(
-        config.id,
-        config.title,
-        config.description,
-        config.content,
-    )
-
-    db.session.add(db_config)
-    db.session.commit()
-
-
-def get_all_client_configs() -> list[DbWhereaboutsClientConfig]:
-    """Return all client configurations."""
-    return db.session.scalars(select(DbWhereaboutsClientConfig)).all()
-
-
-# -------------------------------------------------------------------- #
 # client
 
 
@@ -161,3 +139,25 @@ def get_db_all_clients() -> list[
             DbWhereaboutsClientLivelinessStatus, isouter=True
         )
     ).all()
+
+
+# -------------------------------------------------------------------- #
+# client config
+
+
+def persist_client_config(config: WhereaboutsClientConfig) -> None:
+    """Persist client configurations."""
+    db_config = DbWhereaboutsClientConfig(
+        config.id,
+        config.title,
+        config.description,
+        config.content,
+    )
+
+    db.session.add(db_config)
+    db.session.commit()
+
+
+def get_all_client_configs() -> list[DbWhereaboutsClientConfig]:
+    """Return all client configurations."""
+    return db.session.scalars(select(DbWhereaboutsClientConfig)).all()

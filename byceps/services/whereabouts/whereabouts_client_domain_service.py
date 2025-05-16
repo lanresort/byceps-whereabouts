@@ -33,22 +33,6 @@ from .models import (
 )
 
 
-def create_client_config(
-    title: str,
-    description: str | None,
-    content: str,
-) -> WhereaboutsClientConfig:
-    """Create a client configuration."""
-    config_id = WhereaboutsClientConfigID(generate_uuid7())
-
-    return WhereaboutsClientConfig(
-        id=config_id,
-        title=title,
-        description=description,
-        content=content,
-    )
-
-
 def register_client(
     button_count: int, audio_output: bool
 ) -> tuple[WhereaboutsClientCandidate, WhereaboutsClientRegisteredEvent]:
@@ -157,3 +141,19 @@ def sign_off_client(
     )
 
     return event
+
+
+def create_client_config(
+    title: str,
+    description: str | None,
+    content: str,
+) -> WhereaboutsClientConfig:
+    """Create a client configuration."""
+    config_id = WhereaboutsClientConfigID(generate_uuid7())
+
+    return WhereaboutsClientConfig(
+        id=config_id,
+        title=title,
+        description=description,
+        content=content,
+    )

@@ -40,43 +40,6 @@ log = structlog.get_logger()
 
 
 # -------------------------------------------------------------------- #
-# client config
-
-
-def create_client_config(
-    title: str,
-    description: str | None,
-    content: str,
-) -> WhereaboutsClientConfig:
-    """Create a client configuration."""
-    config = whereabouts_client_domain_service.create_client_config(
-        title, description, content
-    )
-
-    whereabouts_client_repository.persist_client_config(config)
-
-    return config
-
-
-def get_all_client_configs() -> list[WhereaboutsClientConfig]:
-    """Return all client configurations."""
-    db_configs = whereabouts_client_repository.get_all_client_configs()
-
-    return [_db_entity_to_client_config(db_config) for db_config in db_configs]
-
-
-def _db_entity_to_client_config(
-    db_config: DbWhereaboutsClientConfig,
-) -> WhereaboutsClientConfig:
-    return WhereaboutsClientConfig(
-        id=db_config.id,
-        title=db_config.title,
-        description=db_config.description,
-        content=db_config.content,
-    )
-
-
-# -------------------------------------------------------------------- #
 # client
 
 
@@ -299,4 +262,41 @@ def _db_entity_to_client(db_client: DbWhereaboutsClient) -> WhereaboutsClient:
         location=db_client.location,
         description=db_client.description,
         config_id=db_client.config_id,
+    )
+
+
+# -------------------------------------------------------------------- #
+# client config
+
+
+def create_client_config(
+    title: str,
+    description: str | None,
+    content: str,
+) -> WhereaboutsClientConfig:
+    """Create a client configuration."""
+    config = whereabouts_client_domain_service.create_client_config(
+        title, description, content
+    )
+
+    whereabouts_client_repository.persist_client_config(config)
+
+    return config
+
+
+def get_all_client_configs() -> list[WhereaboutsClientConfig]:
+    """Return all client configurations."""
+    db_configs = whereabouts_client_repository.get_all_client_configs()
+
+    return [_db_entity_to_client_config(db_config) for db_config in db_configs]
+
+
+def _db_entity_to_client_config(
+    db_config: DbWhereaboutsClientConfig,
+) -> WhereaboutsClientConfig:
+    return WhereaboutsClientConfig(
+        id=db_config.id,
+        title=db_config.title,
+        description=db_config.description,
+        content=db_config.content,
     )
