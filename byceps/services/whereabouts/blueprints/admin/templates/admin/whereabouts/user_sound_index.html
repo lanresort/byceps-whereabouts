@@ -26,14 +26,14 @@
   <thead>
     <tr>
       <th>{{ _('User') }}</th>
-      <th>{{ _('Sound filename') }}</th>
+      <th>{{ _('Sound name') }}</th>
     </tr>
   </thead>
   <tbody>
     {%- for user_sound in user_sounds|sort(attribute='user.screen_name') %}
     <tr>
       <td>{{ render_user_avatar_and_admin_link(user_sound.user, size=32) }}</td>
-      <td>{{ user_sound.filename|fallback }}</td>
+      <td>{{ user_sound.name|fallback }}</td>
     </tr>
     {%- endfor %}
   </tbody>

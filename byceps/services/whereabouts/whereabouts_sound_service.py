@@ -14,10 +14,10 @@ from .dbmodels import DbWhereaboutsUserSound
 from .models import WhereaboutsUserSound
 
 
-def create_user_sound(user: User, filename: str) -> WhereaboutsUserSound:
+def create_user_sound(user: User, name: str) -> WhereaboutsUserSound:
     """Set a users-specific sound."""
     db_user_sound = whereabouts_sound_repository.create_user_sound(
-        user.id, filename
+        user.id, name
     )
 
     return _db_entity_to_user_sound(db_user_sound, user)
@@ -57,5 +57,5 @@ def _db_entity_to_user_sound(
 ) -> WhereaboutsUserSound:
     return WhereaboutsUserSound(
         user=user,
-        filename=db_user_sound.filename,
+        name=db_user_sound.name,
     )

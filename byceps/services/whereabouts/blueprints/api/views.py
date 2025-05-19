@@ -126,7 +126,7 @@ def get_tag(identifier):
                 'screen_name': identity_tag.user.screen_name,
                 'avatar_url': identity_tag.user.avatar_url,
             },
-            'sound_filename': user_sound.filename if user_sound else None,
+            'sound_name': user_sound.name if user_sound else None,
         }
     )
 

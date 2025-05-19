@@ -166,11 +166,11 @@ class DbWhereaboutsUserSound(db.Model):
     user_id: Mapped[UserID] = mapped_column(
         db.Uuid, db.ForeignKey('users.id'), primary_key=True
     )
-    filename: Mapped[str] = mapped_column(db.UnicodeText)
+    name: Mapped[str] = mapped_column(db.UnicodeText)
 
-    def __init__(self, user_id: UserID, filename: str) -> None:
+    def __init__(self, user_id: UserID, name: str) -> None:
         self.user_id = user_id
-        self.filename = filename
+        self.name = name
 
 
 class DbWhereaboutsStatus(db.Model):

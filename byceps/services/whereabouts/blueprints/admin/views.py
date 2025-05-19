@@ -284,9 +284,9 @@ def user_sound_create():
         return user_sound_create_form(form)
 
     user = form.user.data
-    filename = form.filename.data.strip()
+    name = form.name.data.strip()
 
-    whereabouts_sound_service.create_user_sound(user, filename)
+    whereabouts_sound_service.create_user_sound(user, name)
 
     flash_success(gettext('The object has been created.'))
 

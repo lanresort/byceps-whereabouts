@@ -16,7 +16,7 @@
 <form action="{{ url_for('.user_sound_create') }}" method="post">
   <div class="box">
     {{ form_field(form.user, autofocus=true) }}
-    {{ form_field(form.filename) }}
+    {{ form_field(form.name, caption=_('Filename without suffix')) }}
   </div>
 
   {{ form_buttons(_('Create')) }}

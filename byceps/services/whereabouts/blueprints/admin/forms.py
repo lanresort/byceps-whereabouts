@@ -49,4 +49,4 @@ class UserSoundCreateForm(LocalizedForm):
         lazy_gettext('Username'),
         [InputRequired(), validate_user_screen_name],
     )
-    filename = StringField(lazy_gettext('Sound filename'), [InputRequired()])
+    name = StringField(lazy_gettext('Sound name'), [InputRequired()])

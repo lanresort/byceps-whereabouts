@@ -48,7 +48,7 @@ def test_with_known_identifier(
     assert response_data['user']['id'] == str(identity_tag.user.id)
     assert response_data['user']['screen_name'] == identity_tag.user.screen_name
     assert response_data['user']['avatar_url'] == identity_tag.user.avatar_url
-    assert response_data['sound_filename'] == user_sound.filename
+    assert response_data['sound_name'] == user_sound.name
 
 
 def test_with_known_identifier_unauthorized(

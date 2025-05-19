@@ -96,7 +96,7 @@ class Whereabouts:
 @dataclass(frozen=True)
 class WhereaboutsUserSound:
     user: User
-    filename: str
+    name: str
 
 
 @dataclass(frozen=True)
