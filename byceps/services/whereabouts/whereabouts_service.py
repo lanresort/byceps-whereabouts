@@ -6,6 +6,8 @@ byceps.services.whereabouts.whereabouts_service
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
+import dataclasses
+
 from byceps.services.party import party_service
 from byceps.services.party.models import Party
 from byceps.services.user import user_service
@@ -65,6 +67,27 @@ def create_whereabouts(
     whereabouts_repository.create_whereabouts(whereabouts)
 
     return whereabouts
+
+
+def update_whereabouts(
+    whereabouts: Whereabouts,
+    name: str,
+    description: str,
+    hidden_if_empty: bool,
+    secret: bool,
+) -> Whereabouts:
+    """Update whereabouts."""
+    updated_whereabouts = dataclasses.replace(
+        whereabouts,
+        name=name,
+        description=description,
+        hidden_if_empty=hidden_if_empty,
+        secret=secret,
+    )
+
+    whereabouts_repository.update_whereabouts(updated_whereabouts)
+
+    return updated_whereabouts
 
 
 def find_whereabouts(whereabouts_id: WhereaboutsID) -> Whereabouts | None:

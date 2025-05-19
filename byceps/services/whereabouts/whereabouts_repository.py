@@ -45,6 +45,18 @@ def create_whereabouts(whereabouts: Whereabouts) -> None:
     db.session.commit()
 
 
+def update_whereabouts(whereabouts: Whereabouts) -> None:
+    """Update whereabouts."""
+    db_whereabouts = find_db_whereabouts(whereabouts.id)
+
+    db_whereabouts.name = whereabouts.name
+    db_whereabouts.description = whereabouts.description
+    db_whereabouts.hidden_if_empty = whereabouts.hidden_if_empty
+    db_whereabouts.secret = whereabouts.secret
+
+    db.session.commit()
+
+
 def find_db_whereabouts(whereabouts_id: WhereaboutsID) -> DbWhereabouts | None:
     """Return whereabouts, if found."""
     return db.session.get(DbWhereabouts, whereabouts_id)
