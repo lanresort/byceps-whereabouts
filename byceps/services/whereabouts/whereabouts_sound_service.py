@@ -16,11 +16,11 @@ from .models import WhereaboutsUserSound
 
 def create_user_sound(user: User, name: str) -> WhereaboutsUserSound:
     """Set a users-specific sound."""
-    db_user_sound = whereabouts_sound_repository.create_user_sound(
-        user.id, name
-    )
+    user_sound = WhereaboutsUserSound(user=user, name=name)
 
-    return _db_entity_to_user_sound(db_user_sound, user)
+    whereabouts_sound_repository.create_user_sound(user_sound)
+
+    return user_sound
 
 
 def find_sound_for_user(user_id: UserID) -> WhereaboutsUserSound | None:

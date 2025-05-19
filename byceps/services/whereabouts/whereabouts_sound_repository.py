@@ -12,16 +12,15 @@ from byceps.database import db
 from byceps.services.user.models.user import UserID
 
 from .dbmodels import DbWhereaboutsUserSound
+from .models import WhereaboutsUserSound
 
 
-def create_user_sound(user_id: UserID, name: str) -> DbWhereaboutsUserSound:
+def create_user_sound(user_sound: WhereaboutsUserSound) -> None:
     """Set a users-specific sound."""
-    db_user_sound = DbWhereaboutsUserSound(user_id, name)
+    db_user_sound = DbWhereaboutsUserSound(user_sound.user.id, user_sound.name)
 
     db.session.add(db_user_sound)
     db.session.commit()
-
-    return db_user_sound
 
 
 def find_sound_for_user(user_id: UserID) -> DbWhereaboutsUserSound | None:
