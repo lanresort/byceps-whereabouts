@@ -6,6 +6,8 @@ byceps.services.whereabouts.whereabouts_sound_service
 :License: Revised BSD (see `LICENSE` file for details)
 """
 
+import dataclasses
+
 from byceps.services.user import user_service
 from byceps.services.user.models.user import User, UserID
 
@@ -21,6 +23,22 @@ def create_user_sound(user: User, name: str) -> WhereaboutsUserSound:
     whereabouts_sound_repository.create_user_sound(user_sound)
 
     return user_sound
+
+
+def update_user_sound(
+    user_sound: WhereaboutsUserSound, name: str
+) -> WhereaboutsUserSound:
+    """Update a users-specific sound."""
+    updated_user_sound = dataclasses.replace(user_sound, name=name)
+
+    whereabouts_sound_repository.update_user_sound(updated_user_sound)
+
+    return updated_user_sound
+
+
+def delete_user_sound(user_id: UserID) -> None:
+    """Delete a users-specific sound."""
+    whereabouts_sound_repository.delete_user_sound(user_id)
 
 
 def find_sound_for_user(user_id: UserID) -> WhereaboutsUserSound | None:

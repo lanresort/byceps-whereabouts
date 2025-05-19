@@ -23,6 +23,24 @@ def create_user_sound(user_sound: WhereaboutsUserSound) -> None:
     db.session.commit()
 
 
+def update_user_sound(user_sound: WhereaboutsUserSound) -> None:
+    """Update a users-specific sound."""
+    db_user_sound = find_sound_for_user(user_sound.user.id)
+
+    db_user_sound.name = user_sound.name
+
+    db.session.commit()
+
+
+def delete_user_sound(user_id: UserID) -> None:
+    """Delete a users-specific sound."""
+    db.session.execute(
+        delete(DbWhereaboutsUserSound).filter_by(user_id=user_id)
+    )
+
+    db.session.commit()
+
+
 def find_sound_for_user(user_id: UserID) -> DbWhereaboutsUserSound | None:
     """Find a sound specific for this user."""
     return db.session.scalars(
