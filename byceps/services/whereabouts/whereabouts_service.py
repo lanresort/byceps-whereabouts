@@ -62,7 +62,7 @@ def create_whereabouts(
         secret=secret,
     )
 
-    whereabouts_repository.persist_whereabouts(whereabouts)
+    whereabouts_repository.create_whereabouts(whereabouts)
 
     return whereabouts
 

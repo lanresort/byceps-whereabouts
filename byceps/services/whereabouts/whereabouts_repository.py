@@ -29,7 +29,8 @@ from .models import (
 # whereabouts
 
 
-def persist_whereabouts(whereabouts: Whereabouts) -> None:
+def create_whereabouts(whereabouts: Whereabouts) -> None:
+    """Create whereabouts."""
     db_whereabouts = DbWhereabouts(
         whereabouts.id,
         whereabouts.party.id,
