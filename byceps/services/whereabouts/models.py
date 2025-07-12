@@ -31,7 +31,7 @@ WhereaboutsID = NewType('WhereaboutsID', UUID)
 IPAddress = IPv4Address | IPv6Address
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class WhereaboutsClientConfig:
     id: WhereaboutsClientConfigID
     title: str
@@ -44,7 +44,7 @@ WhereaboutsClientAuthorityStatus = Enum(
 )
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class WhereaboutsClientCandidate:
     id: WhereaboutsClientID
     registered_at: datetime
@@ -53,7 +53,7 @@ class WhereaboutsClientCandidate:
     token: str
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class WhereaboutsClient:
     id: WhereaboutsClientID
     registered_at: datetime
@@ -76,13 +76,13 @@ class WhereaboutsClient:
         )
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class WhereaboutsClientWithLivelinessStatus(WhereaboutsClient):
     signed_on: bool
     latest_activity_at: datetime
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class Whereabouts:
     id: WhereaboutsID
     party: Party
@@ -93,20 +93,20 @@ class Whereabouts:
     secret: bool
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class WhereaboutsUserSound:
     user: User
     name: str
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class WhereaboutsStatus:
     user: User
     whereabouts_id: WhereaboutsID
     set_at: datetime
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class WhereaboutsUpdate:
     id: UUID
     user: User
