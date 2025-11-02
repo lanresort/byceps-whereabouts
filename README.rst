@@ -21,7 +21,7 @@ Development started in mid-May 2022; just days before LANresort_ 2022,
 the party where it was deployed for the first time, with great success.
 
 .. _BYCEPS: https://byceps.nwsnet.de/
-.. _Verbleiber: https://github.com/lanresort/verbleiber
+.. _Verbleiber: https://github.com/byceps/verbleiber
 .. _LANresort: https://www.lanresort.de/
 .. _NorthCon: https://www.northcon.de/
 
